@@ -63,7 +63,6 @@ class Joint_Angles:
         cos_theta_2 = ((joint_3_xy**2 + joint_3_z**2 - self.link_2_length**2 -\
             self.link_3_length**2) / (2 * self.link_2_length * self.link_3_length))
         self.joint_3_desired_angle = (atan2(-sqrt(1 - cos_theta_2**2), cos_theta_2))
-        #self.joint_3_desired_angle = acos(cos_theta_2)
 
         # Determine angle of joint 2.
         self.joint_2_desired_angle = (atan2(joint_3_z, joint_3_xy) - \
