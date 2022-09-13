@@ -12,10 +12,10 @@ class Joint_Angles:
         # Class containing the joint angles (radians) of the robot.
 
         # Links lengths
-        self.link_1_length = 10
-        self.link_2_length = 100
-        self.link_3_length = 100
-        self.link_4_length = 20
+        self.link_1_length = 70
+        self.link_2_length = 115
+        self.link_3_length = 95
+        self.link_4_length = 70
 
         # Current angle of each joint
         self.joint_1_angle = 0
@@ -62,6 +62,7 @@ class Joint_Angles:
         # Determine angle of joint 3.
         cos_theta_2 = ((joint_3_xy**2 + joint_3_z**2 - self.link_2_length**2 -\
             self.link_3_length**2) / (2 * self.link_2_length * self.link_3_length))
+        print(cos_theta_2)
         self.joint_3_desired_angle = (atan2(-sqrt(1 - cos_theta_2**2), cos_theta_2))
 
         # Determine angle of joint 2.
