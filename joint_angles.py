@@ -47,49 +47,34 @@ class Joint_Angles:
             pitch_angle (int): angle of the claw in radians, at the desired frame.
         """
         # Determining the desired angle of joint 1:
-        self.joint_1_desired_angle = (atan2(y_coordinate, x_coordinate)) % (2*pi)
+        self.joint_1_desired_angle = (atan2(y_coordinate, x_coordinate))\
         
-        # Distance from joint 1 frame to joint 4 frame in the xy plane.
-        xy_distance_to_joint_4 = sqrt(x_coordinate**2 + y_coordinate**2) - self.link_4_length
-        # Distance from joint 1 frame to joint 4 frame in the z axis.
-        z_distance_to_joint_4 = z_coordinate - self.link_1_length
-        # Total distance from joint 1 frame to joint 4 frame.
-        distance_joint_14 = sqrt(xy_distance_to_joint_4**2 + z_distance_to_joint_4**2)
+        # Determining the desired angle of joint 3 and 2.
+        # Coordinates of joint 3
+        joint_3_x = x_coordinate - self.link_4_length*cos(pitch_angle)*\
+            cos(self.joint_1_desired_angle)
+        joint_3_y = y_coordinate - self.link_4_length*cos(pitch_angle)*\
+            sin(self.joint_1_desired_angle)
+        joint_3_xy = sqrt(joint_3_x**2 + joint_3_y**2)
+        joint_3_z = z_coordinate - self.link_1_length - self.link_4_length*\
+            sin(pitch_angle)
+        
+        # Determine angle of joint 3.
+        cos_theta_2 = ((joint_3_xy**2 + joint_3_z**2 - self.link_2_length**2 -\
+            self.link_3_length**2) / (2 * self.link_2_length * self.link_3_length))
+        self.joint_3_desired_angle = (atan2(-sqrt(1 - cos_theta_2**2), cos_theta_2))
+        #self.joint_3_desired_angle = acos(cos_theta_2)
 
-        # Angle from joint 1 frame to joint 4 frame.
-        theta_14 = acos(xy_distance_to_joint_4/distance_joint_14)
-        
-        # Angle from joint 2 frame to joint 4 frame.
-        theta_24_numerator = self.link_2_length**2 + distance_joint_14**2 - self.link_3_length**2
-        theta_24_denominator = 2 * self.link_2_length * distance_joint_14
-        theta_24 = acos(theta_24_denominator/theta_24_denominator)
+        # Determine angle of joint 2.
+        self.joint_2_desired_angle = (atan2(joint_3_z, joint_3_xy) - \
+            atan2(self.link_3_length*sin(self.joint_3_desired_angle),\
+                self.link_2_length + self.link_3_length*\
+                cos(self.joint_3_desired_angle), ))
 
-        # Determining the desired angle of joint 2:
-        # Subtract from pi/4 as initial position is vertical not horizontal.
-        if z_coordinate > self.link_1_length:
-            # Add angles between joints 1 and 4, and 2 and 4, if the grabber is above the second 
-            # joint.
-            self.joint_2_desired_angle = (theta_24 + theta_14) % (2*pi)
-        else:
-            # Find the difference between the angle from 1 and 4, and 2 and 4 if the grabber is
-            # below the second joint.
-            self.joint_2_desired_angle = (theta_24 - theta_14) % (2*pi)
-        
-        # Determining the desired angle of joint 3.
-        # Subtract from pi/2 as initial position is vertical not horizontal.
-        theta_3_numerator = self.link_2_length**2 + self.link_3_length**2 - distance_joint_14**2
-        theta_3_denominator = 2 * self.link_2_length * self.link_3_length
-        self.joint_3_desired_angle = acos(theta_3_numerator/theta_3_denominator) % (2*pi)
-        
         # Determining the desired angle of joint 4.
-        if z_coordinate > self.link_1_length:
-            # Subtract angles between joints 1 and 4 if the grabber is above the second joint.
-            self.joint_4_desired_angle = (pi + ((pi - (theta_24 + self.joint_3_desired_angle))\
-                - theta_14)) % (2*pi)
-        else:
-            # Add angles between joints 1 and 4 if the grabber is below the second joint.
-            self.joint_4_desired_angle = (pi + ((pi - (theta_24 + self.joint_3_desired_angle))\
-                + theta_14)) % (2*pi)
+        self.joint_4_desired_angle = (pitch_angle - self.joint_2_desired_angle -\
+            self.joint_3_desired_angle) % (2*pi)
+        
 
     
     def plot_robot(self, joint_angle_1, joint_angle_2, joint_angle_3, joint_angle_4) -> None:
@@ -167,6 +152,7 @@ def main():
     # Plot the robot
     robot.plot_robot(robot.joint_1_desired_angle, robot.joint_2_desired_angle, \
         robot.joint_3_desired_angle, robot.joint_4_desired_angle)
+    #robot.plot_robot(pi/2, pi/2, pi/2, pi/2)
 
 if __name__ == '__main__':
     main()
