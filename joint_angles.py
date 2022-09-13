@@ -1,5 +1,5 @@
 from ast import increment_lineno
-from math import acos, atan2, pi, sqrt, cos, sin
+from math import atan2, pi, sqrt, cos, sin
 
 from mpl_toolkits import mplot3d
 
@@ -134,9 +134,6 @@ def main():
     # Initilise the robot.
     robot = Joint_Angles()
     
-    # print(atan2(1,2))
-    # print(atan2(-1,2))
-    
     # Get coordinates and pitch of the desired frame.
     x_coordinate = float(input("x_coordinate: "))
     y_coordinate = float(input("y_coordinate: "))
@@ -152,7 +149,7 @@ def main():
     # Plot the robot
     robot.plot_robot(robot.joint_1_desired_angle, robot.joint_2_desired_angle, \
         robot.joint_3_desired_angle, robot.joint_4_desired_angle)
-    #robot.plot_robot(pi/2, pi/2, pi/2, pi/2)
+
 
 if __name__ == '__main__':
     main()
