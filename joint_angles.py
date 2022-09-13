@@ -46,6 +46,16 @@ class Joint_Angles:
             base of the arm.
             pitch_angle (int): angle of the claw in radians, at the desired frame.
         """
+        # Error Handling
+        # Break if desired frame is outside the workspace
+        workspace_limit = sqrt(self.link_2_length**2 + self.link_3_length**2 + \
+            self.link_4_length**2)
+        distance_to_desired_frame = sqrt(x_coordinate**2 + y_coordinate**2 + \
+            (z_coordinate - self.link_1_length)**2)
+        if distance_to_desired_frame > workspace_limit:
+            print("Error: Desired frame is out of range.")
+            return None
+
         # Determining the desired angle of joint 1:
         self.joint_1_desired_angle = (atan2(y_coordinate, x_coordinate))\
         
