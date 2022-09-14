@@ -90,6 +90,9 @@ class Joint_Angles:
         # Plots the robot configuration for debugging
         fig = plt.figure()
         axes = plt.axes(projection='3d')
+        axes.set_ylabel("Y")
+        axes.set_xlabel("X")
+        axes.set_zlabel("Z")
         
         # Plot Link 1
         # Link 1 pivots about (0,0,0)
@@ -152,8 +155,12 @@ def main():
     # Find the joint angle that reach the desired frame.
     robot.find_joint_angles(x_coordinate,y_coordinate,z_coordinate,pitch_angle)
 
-    # Print desired joint angles to the terminal
-    print(robot.joint_1_desired_angle, robot.joint_2_desired_angle, robot.joint_3_desired_angle, robot.joint_4_desired_angle)
+    # Print desired joint angles to the terminal (rad)
+    print(robot.joint_1_desired_angle, (pi/2)-robot.joint_2_desired_angle, \
+        (pi/2)-robot.joint_3_desired_angle, robot.joint_4_desired_angle+(pi/2))
+    # Print desired joint angles to the terminal (deg)
+    print((robot.joint_1_desired_angle)*(180/pi), ((pi/2)-robot.joint_2_desired_angle)*(180/pi), \
+        ((pi/2)-robot.joint_3_desired_angle)*(180/pi), (robot.joint_4_desired_angle+(pi/2))*(180/pi))
     
     # Plot the robot
     robot.plot_robot(robot.joint_1_desired_angle, robot.joint_2_desired_angle, \
