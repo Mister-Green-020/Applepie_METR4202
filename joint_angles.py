@@ -48,8 +48,8 @@ class Joint_Angles:
         """
         # Error Handling
         # Break if desired frame is outside the workspace
-        workspace_limit = sqrt(self.link_2_length**2 + self.link_3_length**2 + \
-            self.link_4_length**2)
+        workspace_limit = self.link_2_length + self.link_3_length + \
+            self.link_4_length
         distance_to_desired_frame = sqrt(x_coordinate**2 + y_coordinate**2 + \
             (z_coordinate - self.link_1_length)**2)
         if distance_to_desired_frame > workspace_limit:
