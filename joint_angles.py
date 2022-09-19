@@ -156,8 +156,8 @@ def main():
     robot.find_joint_angles(x_coordinate,y_coordinate,z_coordinate,pitch_angle)
 
     # Print desired joint angles to the terminal (rad)
-    print(robot.joint_1_desired_angle, (pi/2)-robot.joint_2_desired_angle, \
-        (pi/2)-robot.joint_3_desired_angle, robot.joint_4_desired_angle+(pi/2))
+    print(robot.joint_4_desired_angle+(pi/2), (pi/2)-robot.joint_3_desired_angle, \
+    (pi/2)-robot.joint_2_desired_angle, robot.joint_1_desired_angle)
     # Print desired joint angles to the terminal (deg)
     print((robot.joint_1_desired_angle)*(180/pi), ((pi/2)-robot.joint_2_desired_angle)*(180/pi), \
         ((pi/2)-robot.joint_3_desired_angle)*(180/pi), (robot.joint_4_desired_angle+(pi/2))*(180/pi))
