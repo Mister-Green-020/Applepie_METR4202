@@ -159,8 +159,8 @@ def main():
     print(robot.joint_4_desired_angle+(pi/2), (pi/2)-robot.joint_3_desired_angle, \
     (pi/2)-robot.joint_2_desired_angle, robot.joint_1_desired_angle)
     # Print desired joint angles to the terminal (deg)
-    print((robot.joint_1_desired_angle)*(180/pi), ((pi/2)-robot.joint_2_desired_angle)*(180/pi), \
-        ((pi/2)-robot.joint_3_desired_angle)*(180/pi), (robot.joint_4_desired_angle+(pi/2))*(180/pi))
+    print((robot.joint_4_desired_angle+(pi/2))*(180/pi), ((pi/2)-robot.joint_3_desired_angle)*(180/pi), \
+        ((pi/2)-robot.joint_2_desired_angle)*(180/pi), (robot.joint_1_desired_angle)*(180/pi))
     
     # Plot the robot
     robot.plot_robot(robot.joint_1_desired_angle, robot.joint_2_desired_angle, \
