@@ -17,12 +17,6 @@ class Joint_Angles:
         self.link_3_length = 95
         self.link_4_length = 70
 
-        # Current angle of each joint
-        self.joint_1_angle = 0
-        self.joint_2_angle = 0
-        self.joint_3_angle = 0
-        self.joint_4_angle = 0
-
         # Desired angle of each joint
         self.joint_1_desired_angle = 0
         self.joint_2_desired_angle = 0
@@ -30,7 +24,10 @@ class Joint_Angles:
         self.joint_4_desired_angle = 0
 
         # Limits for each joint
-        #[INSERT LIMITS HERE]
+        self.joint_1_limit = None
+        self.joint_2_limit = 2.4
+        self.joint_3_limit = 2.6
+        self.joint_4_limit = 2.8
     
     def find_joint_angles(self, x_coordinate, y_coordinate, z_coordinate, \
                         pitch_angle) -> None:
@@ -74,17 +71,26 @@ class Joint_Angles:
             self.link_3_length**2) / (2 * self.link_2_length * self.link_3_length))
         self.joint_3_desired_angle = (atan2(-sqrt(1 - cos_theta_2**2), cos_theta_2))
 
+        # Bound joint 3 angle within limits
+        # self.joint_3_desired_angle = (pi/2) - self.joint_3_desired_angle
+        # if self.joint_3_desired_angle > self.joint_3_limit:
+        #     self.joint_3_desired_angle = (2*pi) - self.joint_3_desired_angle
+        # self.joint_3_desired_angle = (pi/2) - self.joint_3_desired_angle
+
         # Determine angle of joint 2.
         self.joint_2_desired_angle = (atan2(joint_3_z, joint_3_xy) - \
             atan2(self.link_3_length*sin(self.joint_3_desired_angle),\
                 self.link_2_length + self.link_3_length*\
-                cos(self.joint_3_desired_angle), ))
+                cos(self.joint_3_desired_angle)))
 
         # Determining the desired angle of joint 4.
-        self.joint_4_desired_angle = (pitch_angle - self.joint_2_desired_angle -\
-            self.joint_3_desired_angle) % (2*pi)
+        self.joint_4_desired_angle = ((pitch_angle - self.joint_2_desired_angle -\
+            self.joint_3_desired_angle))  
         
-
+        # Convert angles to robot orientation.
+        self.joint_2_desired_angle = (pi/2) - self.joint_2_desired_angle
+        self.joint_3_desired_angle = -self.joint_3_desired_angle
+        #self.joint_4_desired_angle = (self.joint_4_desired_angle + (pi/2)) % (2*pi)
     
     def plot_robot(self, joint_angle_1, joint_angle_2, joint_angle_3, joint_angle_4) -> None:
         # Plots the robot configuration for debugging
@@ -156,15 +162,15 @@ def main():
     robot.find_joint_angles(x_coordinate,y_coordinate,z_coordinate,pitch_angle)
 
     # Print desired joint angles to the terminal (rad)
-    print(robot.joint_4_desired_angle+(pi/2), (pi/2)-robot.joint_3_desired_angle, \
-    (pi/2)-robot.joint_2_desired_angle, robot.joint_1_desired_angle)
+    print(robot.joint_4_desired_angle, robot.joint_3_desired_angle, \
+    robot.joint_2_desired_angle, robot.joint_1_desired_angle)
     # Print desired joint angles to the terminal (deg)
-    print((robot.joint_4_desired_angle+(pi/2))*(180/pi), ((pi/2)-robot.joint_3_desired_angle)*(180/pi), \
-        ((pi/2)-robot.joint_2_desired_angle)*(180/pi), (robot.joint_1_desired_angle)*(180/pi))
+    print((robot.joint_4_desired_angle*(180/pi), robot.joint_3_desired_angle*(180/pi), \
+        robot.joint_2_desired_angle*(180/pi), (robot.joint_1_desired_angle)*(180/pi)))
     
     # Plot the robot
-    robot.plot_robot(robot.joint_1_desired_angle, robot.joint_2_desired_angle, \
-        robot.joint_3_desired_angle, robot.joint_4_desired_angle)
+    robot.plot_robot(robot.joint_1_desired_angle, ((pi/2)-robot.joint_2_desired_angle), \
+        (-robot.joint_3_desired_angle), (robot.joint_4_desired_angle))
 
 
 if __name__ == '__main__':
