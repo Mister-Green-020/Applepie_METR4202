@@ -15,7 +15,7 @@ Go into a directory where you can access.
 
 
 
-Terminal Set Up:
+# Terminal Set Up:
 
 ```console
 cd ~/catkin_ws
@@ -23,4 +23,14 @@ catkin_make
 source devel/setup.bash
 
 roslaunch dynamixel_interface dynamixel_interface_controller.launch
-'''
+
+echo 0 | sudo tee /sys/module/usbcore/parameters/usbfs_memory_mb
+```
+
+
+# Camera Calibration:
+```console
+catkin_make
+rosrun ximea_ros ximea_demo
+rosrun camera_calibration cameracalibrator.py --size 9x6 --square 0.024 image:=/ximea_cam/ximea_31702051/image_raw camera:=/ximea_cam/ximea_31702051
+```
