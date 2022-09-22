@@ -5,6 +5,7 @@ METR4202 Sem 2 2022 Group Project
 # To do:
 
 - State publisher   (Alex)
+http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28python%29
     - publish joint angles using python
 - State machine     (Jonathen, Josh)
     - basic behaviour planning
