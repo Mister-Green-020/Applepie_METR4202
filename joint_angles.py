@@ -71,12 +71,6 @@ class Joint_Angles:
             self.link_3_length**2) / (2 * self.link_2_length * self.link_3_length))
         self.joint_3_desired_angle = (atan2(-sqrt(1 - cos_theta_2**2), cos_theta_2))
 
-        # Bound joint 3 angle within limits
-        # self.joint_3_desired_angle = (pi/2) - self.joint_3_desired_angle
-        # if self.joint_3_desired_angle > self.joint_3_limit:
-        #     self.joint_3_desired_angle = (2*pi) - self.joint_3_desired_angle
-        # self.joint_3_desired_angle = (pi/2) - self.joint_3_desired_angle
-
         # Determine angle of joint 2.
         self.joint_2_desired_angle = (atan2(joint_3_z, joint_3_xy) - \
             atan2(self.link_3_length*sin(self.joint_3_desired_angle),\
