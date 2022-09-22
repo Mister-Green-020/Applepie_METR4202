@@ -1,6 +1,18 @@
 # Applepie_METR4202
 METR4202 Sem 2 2022 Group Project
 
+
+# To do:
+
+- State publisher   (Alex)
+    - publish joint angles using python
+- State machine     (Jonathen, Josh)
+    - basic behaviour planning
+- Camera            (Jade, Ben)
+    - interpert camera data
+        - get coordinates of blocks
+
+
 ## Installing the repo first time
 
 Go into a directory where you can access.
