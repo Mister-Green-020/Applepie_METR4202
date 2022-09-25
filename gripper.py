@@ -27,9 +27,9 @@ def main() :
     rpi.set_mode(18, pigpio.OUTPUT)
 
     rospy.init_node('gripper')
-    rospy.Subscriber('desired_gripper_position', Bool, gripper_callback)
+    rospy.Subscriber('/desired_gripper_position', Bool, gripper_callback)
     
-    gripperPublisher = rospy.Publisher('gripper_position', Bool, queue_size=10)
+    gripperPublisher = rospy.Publisher('/gripper_position', Bool, queue_size=10)
     rospy.Rate(10)
     rospy.spin()
 

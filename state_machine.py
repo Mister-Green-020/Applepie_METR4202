@@ -1,47 +1,93 @@
 #!/usr/bin/env python
 
-import roslib; roslib.load_manifest('smach_tutorials')
+import roslib
 import rospy
 import smach
 import smach_ros
+from std_msgs.msg import String, Bool
+from geometry_msgs.msg import TransformStamped, Quaternion, Vector3
+import numpy as np
 
-# define state Foo
-class Foo(smach.State):
+class InitialState(smach.State):
+    """
+    Initial state sets the arm to a specified initial configuration.
+    Publishes to the gripper and a new position.
+    """
     def __init__(self):
-        smach.State.__init__(self, outcomes=['outcome1','outcome2'])
-        self.counter = 0
+        smach.State.__init__(self, outcomes=['initialised'])
+        self.new_position = rospy.Publisher('/desired_joint_states', TransformStamped, queue_size=10)
+        self.gripper_open = rospy.Publisher('/desired_gripper_position', TransformStamped, queue_size=10)
 
     def execute(self, userdata):
-        rospy.loginfo('Executing state FOO')
-        if self.counter < 3:
-            self.counter += 1
-            return 'outcome1'
-        else:
-            return 'outcome2'
+        rospy.loginfo('Executing state Initial')
+        self.gripper_open.publish(True)
+
+        return 'initialised'
 
 
-# define state Bar
-class Bar(smach.State):
+class MoveToBlock(smach.State):
+    """
+    
+    """
     def __init__(self):
-        smach.State.__init__(self, outcomes=['outcome1'])
+        smach.State.__init__(self, outcomes=['positioned'])
+        self.block_position = rospy.Subscriber('/block_positions', TransformStamped, self.valid_transform)
+        self.new_position = rospy.Publisher('/desired_joint_states', TransformStamped, queue_size=10)
+
+    def valid_transform(self, data) :
+        rospy.loginfo('')
+
 
     def execute(self, userdata):
-        rospy.loginfo('Executing state BAR')
-        return 'outcome1'
+        rospy.loginfo('Executing state Move')
+        return 'positioned'
         
+
+class GrabBlock(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['grabbed'])
+        self.gripper = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
+
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state GrabBlock')
+        self.gripper.publish(False)
+        return 'grabbed'
+
+
+class MoveToDrop(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['drop_positioned'])
+        self.new_position = rospy.Publisher('/desired_joint_states', TransformStamped, queue_size=10)
+
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state MoveToDrop')
+        
+        return 'drop_positioned'
+
+
+class ReleaseBlock(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['released'])
+        self.gripper = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
+
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state Release')
+        self.gripper.publish(True)
+        return 'released'
 
 
 
 
 def main():
-    rospy.init_node('smach_example_state_machine')
+    rospy.init_node('state_machine_main')
 
     # Create a SMACH state machine
     sm = smach.StateMachine(outcomes=['outcome4'])
 
-    # Open the container
     with sm:
-        # Add states to the container
         smach.StateMachine.add('FOO', Foo(), 
                                transitions={'outcome1':'BAR', 'outcome2':'outcome4'})
         smach.StateMachine.add('BAR', Bar(), 
