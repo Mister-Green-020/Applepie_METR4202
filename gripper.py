@@ -7,7 +7,7 @@ from std_msgs.msg import Bool
 
 def gripper_callback(open: Bool):
     """
-    Callback function for the gripper which takes in a Boolean message from a topic re
+    Callback function for the gripper which takes in a Boolean message from a topic
     """
     if open:
         rpi.set_servo_pulsewidth(18, 1000)
