@@ -88,8 +88,8 @@ def main():
     sm = smach.StateMachine(outcomes=['outcome4'])
 
     with sm:
-        smach.StateMachine.add('FOO', Foo(), 
-                               transitions={'outcome1':'BAR', 'outcome2':'outcome4'})
+        smach.StateMachine.add('InitialState', InitialState(), 
+                               transitions={'outcome1':'BAR'})
         smach.StateMachine.add('BAR', Bar(), 
                                transitions={'outcome1':'FOO'})
 
