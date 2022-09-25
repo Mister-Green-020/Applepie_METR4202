@@ -1,6 +1,29 @@
 # Applepie_METR4202
 METR4202 Sem 2 2022 Group Project
 
+Understanding ROS Nodes: http://cdn.joshua-wallace.com/metr4202.png
+State machine logic: http://cdn.joshua-wallace.com/statemachine.png
+
+## Nodes
+- joint_angles.py
+    - Subscribers:
+        - /desired_joint_states
+    - Publishers:
+        - /joint_states
+- state_machine.py (see)
+    - Subscribers:
+        - /block_positions
+    - Publishers:
+        - /desired_gripper_position
+        - /desired_joint_states
+- gripper.py
+    - Subscribers:
+        - /desired_gripper_position
+    - Publishers:
+        - /gripper_position
+- vision nodes and logic
+    - ???
+
 
 # To do:
 
