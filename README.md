@@ -1,5 +1,7 @@
 # Applepie_METR4202
-METR4202 Sem 2 2022 Group Project
+METR4202 Sem 2 2022 Group Project.
+
+
 
 Understanding ROS Nodes: http://cdn.joshua-wallace.com/metr4202.png
 State machine logic: http://cdn.joshua-wallace.com/statemachine.png
@@ -69,3 +71,5 @@ catkin_make
 rosrun ximea_ros ximea_demo
 rosrun camera_calibration cameracalibrator.py --size 9x6 --square 0.024 image:=/ximea_cam/ximea_31702051/image_raw camera:=/ximea_cam/ximea_31702051
 ```
+
+oop
