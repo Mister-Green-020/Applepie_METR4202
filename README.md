@@ -71,5 +71,3 @@ catkin_make
 rosrun ximea_ros ximea_demo
 rosrun camera_calibration cameracalibrator.py --size 9x6 --square 0.024 image:=/ximea_cam/ximea_31702051/image_raw camera:=/ximea_cam/ximea_31702051
 ```
-
-oop
