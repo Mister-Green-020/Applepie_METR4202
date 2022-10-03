@@ -31,11 +31,16 @@ State machine logic: http://cdn.joshua-wallace.com/statemachine.png
 
 - State publisher   (Alex)
     - publish joint angles using python
+    - add the ik functionality to ik_node
+      (Publisher has been written but had trouble integrating ik functions)
+    - need help from someone proficient in python to add ik function
 - State machine     (Jonathen, Josh)
     - basic behaviour planning
 - Camera            (Jade, Ben)
     - interpert camera data
-        - get coordinates of blocks
+        - get coordinates of blocks (Orientation and position)
+        - Color detection
+        - 
 
 
 ## Installing the repo first time
