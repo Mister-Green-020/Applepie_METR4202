@@ -30,7 +30,7 @@ class Joint_Angles:
         self.joint_4_limit = 2.8
     
     def find_joint_angles(self, x_coordinate, y_coordinate, z_coordinate, \
-                        pitch_angle) -> None:
+                        pitch_angle) -> list[int, int]:
         """
         Determine the desired joint angles required to get to a desired frame using 
         inverse kinematics.
