@@ -29,6 +29,8 @@ State machine logic: http://cdn.joshua-wallace.com/statemachine.png
 
 # To do:
 
+- Write function to check valid joint angles (Ben)
+    - prevent robot from trying to break itself
 - State publisher   (Alex)
     - publish joint angles using python
 - State machine     (Jonathen, Josh)
