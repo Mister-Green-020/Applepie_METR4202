@@ -77,10 +77,12 @@ Go into a directory where you can access.
 
 ### Commiting Files to Remote
 For group members to view your files, you need to push them to your branch. Ensure you're in the local repository on your computer, and in the correct branch. Check with `git branch`.
+
 ```console
 git add .
 git commit -m Put a message here saying what you've done
-git push```
+git push
+```
 
 You may need to authenticate depending how you've configured your Git. Once done, you should be able to go onto our GitHub repo and see '[Your name] has had recent pushes'.
 
