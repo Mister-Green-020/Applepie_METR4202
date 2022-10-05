@@ -33,7 +33,7 @@ METR4202 Sem 2 2022 Group Project.
         - /gripper_position (Bool) [Redundant topic]
 
 
-# To do:
+## To do:
 
 - State publisher   (Alex)
     - publish joint angles using python
@@ -43,22 +43,7 @@ METR4202 Sem 2 2022 Group Project.
     - interpert camera data
         - get coordinates of blocks
 
-
-## Installing the repo first time
-
-Go into a directory where you can access.
-
-- `git clone https://github.com/Mister-Green-020/Applepie_METR4202.git`
-- `cd Applepie_METR4202` or just type `cd App` then tab for autocomplete
-- `git remote` to verify that it has installed correctly
-- `git switch -c [your name]` for example, `git switch -c alexandra`
-- `git add .` - you'll use this to add files
-- `git commit -m "Setting up repo"` make an initial commit
-- `git push --set-upstream origin [your name]` sets up your remote branch and pushes any changes to the repo
-
-
-
-# Terminal Set Up:
+## Terminal Set Up:
 
 ```console
 cd ~/catkin_ws
@@ -71,9 +56,40 @@ echo 0 | sudo tee /sys/module/usbcore/parameters/usbfs_memory_mb
 ```
 
 
-# Camera Calibration:
+## Camera Calibration:
 ```console
 catkin_make
 rosrun ximea_ros ximea_demo
 rosrun camera_calibration cameracalibrator.py --size 9x6 --square 0.024 image:=/ximea_cam/ximea_31702051/image_raw camera:=/ximea_cam/ximea_31702051
+```
+
+## GitHub Assistance
+### First Installation
+Go into a directory where you can access.
+
+- `git clone https://github.com/Mister-Green-020/Applepie_METR4202.git`
+- `cd Applepie_METR4202` or just type `cd App` then tab for autocomplete
+- `git remote` to verify that it has installed correctly
+- `git switch -c [your name]` for example, `git switch -c alexandra`
+- `git add .` - you'll use this to add files
+- `git commit -m "Setting up repo"` make an initial commit
+- `git push --set-upstream origin [your name]` sets up your remote branch and pushes any changes to the repo
+
+### Commiting Files to Remote
+For group members to view your files, you need to push them to your branch. Ensure you're in the local repository on your computer, and in the correct branch. Check with `git branch`.
+```console
+git add .
+git commit -m Put a message here saying what you've done
+git push```
+
+You may need to authenticate depending how you've configured your Git. Once done, you should be able to go onto our GitHub repo and see '[Your name] has had recent pushes'.
+
+### Updating Your Local
+If you've configured according to the first installation, you will have two branches installed - one called 'main' and another under your name. All changes will be pulled from main. Ensure you're on your own branch, check with `git branch` and you have commited any recent changes.
+
+```console
+git switch main
+git pull
+git switch yourname
+git merge origin/main
 ```
