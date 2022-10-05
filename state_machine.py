@@ -5,7 +5,7 @@ import rospy
 import smach
 import smach_ros
 from std_msgs.msg import String, Bool
-from geometry_msgs.msg import TransformStamped, Quaternion, Vector3
+from geometry_msgs.msg import Pose, Quaternion, Vector3
 import numpy as np
 
 class InitialState(smach.State):
@@ -15,15 +15,15 @@ class InitialState(smach.State):
     """
     def __init__(self):
         smach.State.__init__(self, outcomes=['initialised'])
-        self.new_position = rospy.Publisher('/desired_joint_states', TransformStamped, queue_size=10)
+        self.new_position = rospy.Publisher('/new_position', Pose, queue_size=10)
         self.gripper_open = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
-        self.transform = TransformStamped
+        self.initial_config = Pose()
 
 
     def execute(self, userdata):
         rospy.loginfo('Executing state Initial')
         self.gripper_open.publish(True)
-        self.new_position.publish(self.transform)
+        self.new_position.publish(self.initial_config)
 
         return 'initialised'
 
@@ -34,10 +34,10 @@ class FindBlock(smach.State):
         http://wiki.ros.org/smach/Tutorials/User%20Data
         """
         smach.State.__init__(self, outcomes=['position_found'], output_keys=['block_transform'])
-        self.positions = rospy.Subscriber('/block_positions', TransformStamped, self.transform)
+        self.positions = rospy.Subscriber('/block_positions', Pose, self.transform)
         
         self.block_found = False
-        self.transform = TransformStamped()
+        self.transform = Pose()
 
     def transform(self, tf):
         self.transform = tf
@@ -62,7 +62,7 @@ class MoveToBlock(smach.State):
     """
     def __init__(self):
         smach.State.__init__(self, outcomes=['positioned'], input_keys=['block_transform'])
-        self.new_position = rospy.Publisher('/desired_joint_states', TransformStamped, queue_size=10)
+        self.new_position = rospy.Publisher('/new_position', Pose, queue_size=10)
 
 
     def execute(self, userdata):
@@ -86,7 +86,7 @@ class GrabBlock(smach.State):
 class MoveToDrop(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['drop_positioned'])
-        self.new_position = rospy.Publisher('/desired_joint_states', TransformStamped, queue_size=10)
+        self.new_position = rospy.Publisher('/new_position', Pose, queue_size=10)
         self.zone_1_blocks = 0
         self.zone_2_blocks = 0
         self.zone_3_blocks = 0
@@ -94,7 +94,7 @@ class MoveToDrop(smach.State):
 
     def execute(self, userdata):
         rospy.loginfo('Executing state MoveToDrop')
-        move_to = TransformStamped()
+        move_to = Pose()
 
         # Some way to associate colours with enum
         zone = 1

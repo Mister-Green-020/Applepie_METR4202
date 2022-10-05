@@ -27,18 +27,18 @@ class InverseKinematics:
 
 
     def inverse_kinematics(self, pose: Pose) -> JointState: 
-        rospy.loginfo(f'Got Desired Pose:\n[\n\tpos:\n{pose.position}\nrot:\n{pose.orientation}\n]')
+        rospy.loginfo(f'Got Desired Pose:\n[\n\tpos:\n{pose.position}/\nrot:\n{pose.orientation}\n]')
         
-        angle_1 = (atan2(pose.y, pose.x))\
+        angle_1 = (atan2(pose.position.y, pose.position.x))\
         
         # Determining the desired angle of joint 3 and 2.
         # Coordinates of joint 3
-        joint_3_x = pose.x - self.l4_length*cos(pose.w)*\
+        joint_3_x = pose.position.x - self.l4_length*cos(pose.w)*\
             cos(angle_1)
-        joint_3_y = pose.y - self.l4_length*cos(pose.w)*\
+        joint_3_y = pose.position.y - self.l4_length*cos(pose.w)*\
             sin(angle_1)
         joint_3_xy = sqrt(joint_3_x**2 + joint_3_y**2)
-        joint_3_z = pose.z - self.l1_length - self.l4_length*\
+        joint_3_z = pose.position.z - self.l1_length - self.l4_length*\
             sin(pose.w)
         
         # Determine angle of joint 3.
@@ -53,8 +53,7 @@ class InverseKinematics:
                 cos(angle_3)))
 
         # Determining the desired angle of joint 4.
-        angle_4 = ((pose.w - angle_2 -\
-            angle_3))  
+        angle_4 = pose.w - angle_2 - angle_3 
         
         # Convert angles to robot orientation.
         angle_2 = (pi/2) - angle_2
