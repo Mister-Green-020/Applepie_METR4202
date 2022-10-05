@@ -24,53 +24,50 @@ class InverseKinematics:
         self.l2_length = 115
         self.l3_length = 95
         self.l4_length = 70
+        self.pitch_angle = 60*pi/180
 
 
-    def inverse_kinematics(self, pose: Pose) -> JointState: 
+    def inverse_kinematics(self, pose: Pose) : 
         rospy.loginfo(f'Got Desired Pose:\n[\n\tpos:\n{pose.position}/\nrot:\n{pose.orientation}\n]')
         
-        angle_1 = (atan2(pose.position.y, pose.position.x))\
+        theta_1 = atan2(pose.position.y, pose.position.x)
         
         # Determining the desired angle of joint 3 and 2.
         # Coordinates of joint 3
-        joint_3_x = pose.position.x - self.l4_length*cos(pose.w)*\
-            cos(angle_1)
-        joint_3_y = pose.position.y - self.l4_length*cos(pose.w)*\
-            sin(angle_1)
+        joint_3_x = pose.position.x - self.l4_length*cos(self.pitch_angle)*cos(theta_1)
+        joint_3_y = pose.position.y - self.l4_length*cos(self.pitch_angle)*sin(theta_1)
+
         joint_3_xy = sqrt(joint_3_x**2 + joint_3_y**2)
-        joint_3_z = pose.position.z - self.l1_length - self.l4_length*\
-            sin(pose.w)
+        joint_3_z = pose.position.z - self.l1_length - self.l4_length*sin(self.pitch_angle)
         
         # Determine angle of joint 3.
-        cos_theta_2 = ((joint_3_xy**2 + joint_3_z**2 - self.l2_length**2 -\
-            self.l3_length**2) / (2 * self.l2_length * self.l3_length))
-        angle_3 = (atan2(-sqrt(1 - cos_theta_2**2), cos_theta_2))
+        cos_theta_2 = (joint_3_xy**2 + joint_3_z**2 - self.l2_length**2 - self.l3_length**2) / (2 * self.l2_length * self.l3_length)
+        
+        theta_3 = atan2(-sqrt(1 - cos_theta_2**2), cos_theta_2)
 
         # Determine angle of joint 2.
-        angle_2 = (atan2(joint_3_z, joint_3_xy) - \
-            atan2(self.l3_length*sin(angle_3),\
-                self.l2_length + self.l3_length*\
-                cos(angle_3)))
+        theta_2 = atan2(joint_3_z, joint_3_xy) - atan2(self.l3_length*sin(theta_3), self.l2_length + self.l3_length*cos(theta_3))
 
         # Determining the desired angle of joint 4.
-        angle_4 = pose.w - angle_2 - angle_3 
+        theta_4 = self.pitch_angle - theta_2 - theta_3 
         
         # Convert angles to robot orientation.
-        angle_2 = (pi/2) - angle_2
-        angle_3 = -angle_3
+        theta_2 = (pi/2) - theta_2
+        theta_3 = -theta_3
         
         msg = JointState(
             header = Header(stamp=rospy.Time.now()),
-            name = ['joint_1','joint_2','joint_3','joint_4'],
-            position = [angle_1, angle_2, angle_3, angle_4]
+            name = ['joint_1', 'joint_2', 'joint_3', 'joint_4'],
+            position = [theta_1, theta_2, theta_3, theta_4]
         )
+
         self.pub.publish(msg)
 
 
 
 def main(): 
     rospy.init_node('joint_publisher', anonymous=True)
-    InverseKinematics()
+    ik_node = InverseKinematics()
     rospy.spin() 
 
 if __name__ == '__main__':
