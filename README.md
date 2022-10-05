@@ -35,16 +35,15 @@ METR4202 Sem 2 2022 Group Project.
 
 ## To do:
 
-- Write function to check valid joint angles (Ben)
-    - prevent robot from trying to break itself
-- State publisher   (Alex)
-http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28python%29
-    - publish joint angles using python
-- State machine     (Jonathen, Josh)
+- State machine
     - basic behaviour planning
-- Camera            (Jade, Ben)
+        - flip gripper 90 degrees to detect block colour
+- Camera
+    - Take picture (metr4202_ximea_ros/.../example_camera.py)
     - interpert camera data
         - get coordinates of blocks
+            - frame transform using modern robotics library
+        - determine block colour (metr4202_ximea_ros/.../ximea_color_detect.cpp)
 
 ## Terminal Set Up:
 
@@ -66,6 +65,11 @@ echo 0 | sudo tee /sys/module/usbcore/parameters/usbfs_memory_mb
 catkin_make
 rosrun ximea_ros ximea_demo
 rosrun camera_calibration cameracalibrator.py --size 9x6 --square 0.024 image:=/ximea_cam/ximea_31702051/image_raw camera:=/ximea_cam/ximea_31702051
+```
+
+## ArUca Tag Detection
+```console
+roslaunch ximea_ros ximea_aruco.launch serial:=31702051
 ```
 
 ## GitHub Assistance
