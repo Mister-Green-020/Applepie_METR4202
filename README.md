@@ -1,30 +1,36 @@
 # Applepie_METR4202
 METR4202 Sem 2 2022 Group Project.
 
-
-
-Understanding ROS Nodes: http://cdn.joshua-wallace.com/metr4202.png
-State machine logic: http://cdn.joshua-wallace.com/statemachine.png
+- Understanding ROS Nodes: http://cdn.joshua-wallace.com/metr4202.png
+- State machine logic: http://cdn.joshua-wallace.com/statemachine.png
 
 ## Nodes
-- joint_angles.py
-    - Subscribers:
-        - /desired_joint_states
-    - Publishers:
-        - /joint_states
-- state_machine.py (see)
-    - Subscribers:
-        - /block_positions
-    - Publishers:
-        - /desired_gripper_position
-        - /desired_joint_states
+- joint_publisher.py
+    - Given a desired pose (3D point to move to), computes the required angles to achieve the pose
+    - Subscribes To
+        - /new_position (Pose)
+    - Publishes To
+        - /desired_joint_states (JointState)
+- state_machine.py
+    - Implements logic to complete move-grab-drop circuit and initialisation of robot
+    - Subscribes To
+        - /block_positions (TBD)
+    - Publishes To
+        - /desired_gripper_position (Bool)
+        - /new_position (Pose)
+        - /ximea_ros/show_rgb (Bool)
+- block_planning.py
+    - Node to handle behaviour planning including collision checking, colours and position/orientation of blocks
+    - Subscribes to
+        - /ximea_ros/ximea_XXXXXXXX/image_raw (sensors_msgs/Image)
+    - Publishes to
+        - /block_positions (TBD)
 - gripper.py
-    - Subscribers:
-        - /desired_gripper_position
-    - Publishers:
-        - /gripper_position
-- vision nodes and logic
-    - ???
+    - Node to actuate the gripper when directed by state machine
+    - Subscribes To
+        - /desired_gripper_position (Bool)
+    - Publishes To
+        - /gripper_position (Bool) [Redundant topic]
 
 
 # To do:
@@ -71,5 +77,3 @@ catkin_make
 rosrun ximea_ros ximea_demo
 rosrun camera_calibration cameracalibrator.py --size 9x6 --square 0.024 image:=/ximea_cam/ximea_31702051/image_raw camera:=/ximea_cam/ximea_31702051
 ```
-
-oop
