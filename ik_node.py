@@ -8,6 +8,7 @@ from sensor_msgs.msg import JointState
 
 from ast import increment_lineno
 from math import atan2, pi, sqrt, cos, sin
+import joint_angles
 
 from mpl_toolkits import mplot3d
 
@@ -19,41 +20,20 @@ class InverseKinematics:
     def __init__(self) :
         self.pub = rospy.Publisher('desired_joint_states', JointState, queue_size=10)
         self.sub = rospy.Subscriber('new_position', Pose, self.inverse_kinematics)
-
-        self.l1_length = 70
-        self.l2_length = 115
-        self.l3_length = 95
-        self.l4_length = 70
-        self.pitch_angle = 60*pi/180
+        self.pitch_angle = -60*pi/180
 
 
     def inverse_kinematics(self, pose: Pose) : 
         rospy.loginfo(f'Got Desired Pose:\n[\n\tpos:\n{pose.position}/\nrot:\n{pose.orientation}\n]')
         
-        theta_1 = atan2(pose.position.y, pose.position.x)
-        
-        # Determining the desired angle of joint 3 and 2.
-        # Coordinates of joint 3
-        joint_3_x = pose.position.x - self.l4_length*cos(self.pitch_angle)*cos(theta_1)
-        joint_3_y = pose.position.y - self.l4_length*cos(self.pitch_angle)*sin(theta_1)
+        robot_joint_angles = joint_angles.Joint_Angles()
 
-        joint_3_xy = sqrt(joint_3_x**2 + joint_3_y**2)
-        joint_3_z = pose.position.z - self.l1_length - self.l4_length*sin(self.pitch_angle)
-        
-        # Determine angle of joint 3.
-        cos_theta_2 = (joint_3_xy**2 + joint_3_z**2 - self.l2_length**2 - self.l3_length**2) / (2 * self.l2_length * self.l3_length)
-        
-        theta_3 = atan2(-sqrt(1 - cos_theta_2**2), cos_theta_2)
+        robot_joint_angles.find_joint_angles(pose.position.x, pose.position.y, pose.position.z, self.pitch_angle)
 
-        # Determine angle of joint 2.
-        theta_2 = atan2(joint_3_z, joint_3_xy) - atan2(self.l3_length*sin(theta_3), self.l2_length + self.l3_length*cos(theta_3))
-
-        # Determining the desired angle of joint 4.
-        theta_4 = self.pitch_angle - theta_2 - theta_3 
-        
-        # Convert angles to robot orientation.
-        theta_2 = (pi/2) - theta_2
-        theta_3 = -theta_3
+        theta_1 = robot_joint_angles.joint_1_desired_angle
+        theta_2 = robot_joint_angles.joint_2_desired_angle
+        theta_3 = robot_joint_angles.joint_3_desired_angle
+        theta_4 = robot_joint_angles.joint_4_desired_angle
         
         msg = JointState(
             header = Header(stamp=rospy.Time.now()),
