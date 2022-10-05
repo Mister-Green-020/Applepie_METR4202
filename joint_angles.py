@@ -54,32 +54,30 @@ class Joint_Angles:
             return None
 
         # Determining the desired angle of joint 1:
-        self.joint_1_desired_angle = (atan2(y_coordinate, x_coordinate))\
+        self.joint_1_desired_angle = atan2(y_coordinate, x_coordinate)
         
         # Determining the desired angle of joint 3 and 2.
-        # Coordinates of joint 3
-        joint_3_x = x_coordinate - self.link_4_length*cos(pitch_angle)*\
-            cos(self.joint_1_desired_angle)
-        joint_3_y = y_coordinate - self.link_4_length*cos(pitch_angle)*\
-            sin(self.joint_1_desired_angle)
-        joint_3_xy = sqrt(joint_3_x**2 + joint_3_y**2)
-        joint_3_z = z_coordinate - self.link_1_length - self.link_4_length*\
+        # Coordinates of joint 4 in relation to joint 2
+        joint_4_xy = sqrt(x_coordinate**2 + y_coordinate**2) - self.link_4_length*cos(pitch_angle)
+        joint_4_z = z_coordinate - self.link_1_length - self.link_4_length*\
             sin(pitch_angle)
-        
+
         # Determine angle of joint 3.
-        cos_theta_2 = ((joint_3_xy**2 + joint_3_z**2 - self.link_2_length**2 -\
+        cos_theta_2 = ((joint_4_xy**2 + joint_4_z**2 - self.link_2_length**2 -\
             self.link_3_length**2) / (2 * self.link_2_length * self.link_3_length))
-        self.joint_3_desired_angle = (atan2(-sqrt(1 - cos_theta_2**2), cos_theta_2))
+        self.joint_3_desired_angle = (atan2(-sqrt(abs(1 - cos_theta_2**2)), cos_theta_2))
 
         # Determine angle of joint 2.
-        self.joint_2_desired_angle = (atan2(joint_3_z, joint_3_xy) - \
+        self.joint_2_desired_angle = (atan2(joint_4_z, joint_4_xy) - \
             atan2(self.link_3_length*sin(self.joint_3_desired_angle),\
                 self.link_2_length + self.link_3_length*\
                 cos(self.joint_3_desired_angle)))
 
         # Determining the desired angle of joint 4.
         self.joint_4_desired_angle = ((pitch_angle - self.joint_2_desired_angle -\
-            self.joint_3_desired_angle))  
+            self.joint_3_desired_angle))  % (2*pi)
+        if self.joint_4_desired_angle > pi:
+            self.joint_4_desired_angle = (2*pi) - self.joint_4_desired_angle
         
         # Convert angles to robot orientation.
         self.joint_2_desired_angle = (pi/2) - self.joint_2_desired_angle
@@ -145,7 +143,7 @@ class Joint_Angles:
 def main():
     # Initilise the robot.
     robot = Joint_Angles()
-    
+
     # Get coordinates and pitch of the desired frame.
     x_coordinate = float(input("x_coordinate: "))
     y_coordinate = float(input("y_coordinate: "))

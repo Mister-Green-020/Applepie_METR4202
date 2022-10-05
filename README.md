@@ -64,7 +64,7 @@ source devel/setup.bash
 
 roslaunch dynamixel_interface dynamixel_interface_controller.launch
 
-rostopic pub /desired_joint_states [TAB]
+rostopic pub /desired_joint_states /msg_JointState [TAB]
 
 echo 0 | sudo tee /sys/module/usbcore/parameters/usbfs_memory_mb
 ```
