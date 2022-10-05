@@ -82,7 +82,6 @@ class Joint_Angles:
         # Convert angles to robot orientation.
         self.joint_2_desired_angle = (pi/2) - self.joint_2_desired_angle
         self.joint_3_desired_angle = -self.joint_3_desired_angle
-        #self.joint_4_desired_angle = (self.joint_4_desired_angle + (pi/2)) % (2*pi)
     
     def plot_robot(self, joint_angle_1, joint_angle_2, joint_angle_3, joint_angle_4) -> None:
         # Plots the robot configuration for debugging
