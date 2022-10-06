@@ -61,7 +61,7 @@ class Joint_Angles:
         joint_4_xy = sqrt(x_coordinate**2 + y_coordinate**2) - self.link_4_length*cos(pitch_angle)
         joint_4_z = z_coordinate - self.link_1_length - self.link_4_length*\
             sin(pitch_angle)
-
+        
         # Determine angle of joint 3.
         cos_theta_2 = ((joint_4_xy**2 + joint_4_z**2 - self.link_2_length**2 -\
             self.link_3_length**2) / (2 * self.link_2_length * self.link_3_length))
@@ -77,7 +77,7 @@ class Joint_Angles:
         self.joint_4_desired_angle = ((pitch_angle - self.joint_2_desired_angle -\
             self.joint_3_desired_angle))  % (2*pi)
         if self.joint_4_desired_angle > pi:
-            self.joint_4_desired_angle = (2*pi) - self.joint_4_desired_angle
+            self.joint_4_desired_angle = -((2*pi) - self.joint_4_desired_angle)
         
         # Convert angles to robot orientation.
         self.joint_2_desired_angle = (pi/2) - self.joint_2_desired_angle
