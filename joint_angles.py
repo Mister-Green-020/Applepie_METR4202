@@ -1,9 +1,4 @@
-from ast import increment_lineno
 from math import atan2, pi, sqrt, cos, sin
-
-from mpl_toolkits import mplot3d
-
-import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -63,9 +58,9 @@ class Joint_Angles:
             sin(pitch_angle)
         
         # Determine angle of joint 3.
-        cos_theta_2 = ((joint_4_xy**2 + joint_4_z**2 - self.link_2_length**2 -\
+        cos_theta_3 = ((joint_4_xy**2 + joint_4_z**2 - self.link_2_length**2 -\
             self.link_3_length**2) / (2 * self.link_2_length * self.link_3_length))
-        self.joint_3_desired_angle = (atan2(-sqrt(abs(1 - cos_theta_2**2)), cos_theta_2))
+        self.joint_3_desired_angle = (atan2(-sqrt(abs(1 - cos_theta_3**2)), cos_theta_3))
 
         # Determine angle of joint 2.
         self.joint_2_desired_angle = (atan2(joint_4_z, joint_4_xy) - \
