@@ -7,10 +7,10 @@ class Joint_Angles:
         # Class containing the joint angles (radians) of the robot.
 
         # Links lengths
-        self.link_1_length = 70
-        self.link_2_length = 115
+        self.link_1_length = 115
+        self.link_2_length = 117
         self.link_3_length = 95
-        self.link_4_length = 70
+        self.link_4_length = 115
 
         # Desired angle of each joint
         self.joint_1_desired_angle = 0
@@ -77,7 +77,7 @@ class Joint_Angles:
         # Convert angles to robot orientation.
         self.joint_2_desired_angle = (pi/2) - self.joint_2_desired_angle
         self.joint_3_desired_angle = -self.joint_3_desired_angle
-    
+
     def plot_robot(self, joint_angle_1, joint_angle_2, joint_angle_3, joint_angle_4) -> None:
         # Plots the robot configuration for debugging
         fig = plt.figure()
@@ -155,8 +155,8 @@ def main():
         robot.joint_2_desired_angle*(180/pi), (robot.joint_1_desired_angle)*(180/pi)))
     
     # Plot the robot
-    robot.plot_robot(robot.joint_1_desired_angle, ((pi/2)-robot.joint_2_desired_angle), \
-        (-robot.joint_3_desired_angle), (robot.joint_4_desired_angle))
+    # robot.plot_robot(robot.joint_1_desired_angle, ((pi/2)-robot.joint_2_desired_angle), \
+    #     (-robot.joint_3_desired_angle), (robot.joint_4_desired_angle))
 
 
 if __name__ == '__main__':
