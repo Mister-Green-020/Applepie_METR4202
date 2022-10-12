@@ -5,8 +5,35 @@ import rospy
 import smach
 import smach_ros
 from std_msgs.msg import String, Bool
-from geometry_msgs.msg import Pose, Quaternion, Vector3
+from geometry_msgs.msg import Pose, Point, Quaternion, Vector3
 import numpy as np
+
+class Setup(smach.State):
+    """
+    Setup state aimed at checking motors work and initialising camera detection
+    """
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['setup'])
+        self.position_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
+        self.camera_pub = rospy.Publisher('/ximea_ros/show_rgb', Bool, queue_size=10)
+        self.setup_state = Pose()
+
+        # Need someone to set these to fully upright (all joints straight)
+        self.setup_state.position.x = 0
+        self.setup_state.position.y = 0
+        self.setup_state.position.z = 100
+
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state setup')
+        show_rgb = Bool()
+        show_rgb.data = True
+        self.camera_pub(show_rgb)
+
+        self.position_pub.publish(self.setup_state)
+
+        return 'setup'
+        
 
 class InitialState(smach.State):
     """
@@ -18,6 +45,14 @@ class InitialState(smach.State):
         self.new_position = rospy.Publisher('/new_position', Pose, queue_size=10)
         self.gripper_open = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
         self.initial_config = Pose()
+        
+        # Need someone to set these to L joint ->
+        #    First joint straight
+        #    Second joint at 90 deg
+        #    third and fourth straight
+        self.setup_state.position.x = 0
+        self.setup_state.position.y = 0
+        self.setup_state.position.z = 100
 
 
     def execute(self, userdata):
@@ -150,6 +185,9 @@ def main():
     sm = smach.StateMachine(outcomes=['released'])
 
     with sm:
+        smach.StateMachine.add('Setup', Setup(), 
+                transitions={'setup' : 'InitialState'})
+
         smach.StateMachine.add('InitialState', InitialState(), 
                         transitions={'initialised' : 'FindBlock'})
 
