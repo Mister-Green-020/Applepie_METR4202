@@ -5,6 +5,7 @@ METR4202 Sem 2 2022 Group Project.
 - State machine logic: http://cdn.joshua-wallace.com/statemachine.png
 
 ## Nodes
+- Note XXXXXXXX = 31702051
 - joint_publisher.py
     - Given a desired pose (3D point to move to), computes the required angles to achieve the pose
     - Subscribes To

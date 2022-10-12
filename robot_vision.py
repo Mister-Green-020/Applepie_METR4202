@@ -4,7 +4,7 @@
 import rospy
 from std_msgs.msg import Header, String
 from sensor_msgs.msg import Image
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Pose, Point
 from fiducial_msgs.msg import FiducialTransformArray
 
 from ast import increment_lineno
@@ -15,11 +15,18 @@ from mpl_toolkits import mplot3d
 import numpy as np
 import matplotlib.pyplot as plt
 
-class BlockPlanning:
+class RobotVision:
 
 
-    def __init__(self, serial) :
-        self.serial = serial
+    def __init__(self) :
+        # Frame Transform from robot base to camera, needs to be filled in
+        self.T_rc = np.array(
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        )
+
         self.pub = rospy.Publisher('block_positions', Pose, queue_size=10)
         
         # http://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/Image.html
@@ -28,7 +35,7 @@ class BlockPlanning:
         # Suggestion http://wiki.ros.org/fiducials and
         # Use FiducialTransforms http://docs.ros.org/en/kinetic/api/fiducial_msgs/html/msg/FiducialTransform.html
         # Many http://docs.ros.org/en/kinetic/api/fiducial_msgs/html/msg/FiducialTransformArray.html
-        self.sub = rospy.Subscriber(f'ximea_ros/ximea_{self.serial}/image_raw', Image, self.image_received)
+        self.sub = rospy.Subscriber('/fiducial_transforms', FiducialTransformArray, self.image_received)
 
 
 
@@ -37,15 +44,21 @@ class BlockPlanning:
         http://docs.ros.org/en/kinetic/api/fiducial_msgs/html/msg/FiducialTransformArray.html
         """
         fiducial_transforms = fiducialTransformArray.transforms
+        # For collision checking (in bounds to be grabbed)
         available_transforms = []
 
         for transform in fiducial_transforms :
-            if self.collision_checking(transform, fiducial_transforms) :
-                available_transforms.append(transform)
+            # Add a collision checker here
+            available_transforms.append(transform)
 
-        if not len(available_transforms) :
+        # If there are transforms available, select the first for now
+        if (len(available_transforms) > 0) :
             selected = available_transforms[0]
-            msg = Pose()
+
+            # Need someone to do some math magic here to send position for robot
+            msg = Pose(
+                position = Point(0, 0, 0)
+            )
             self.pub.publish(msg)
 
     
@@ -67,8 +80,8 @@ class BlockPlanning:
 
 
 def main(): 
-    rospy.init_node('block_planning', anonymous=True)
-    bp = BlockPlanning('31702951')
+    rospy.init_node('robot_vision', anonymous=True)
+    rv = RobotVision()
     rospy.spin() 
 
 if __name__ == '__main__':
