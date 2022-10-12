@@ -20,7 +20,7 @@ class Joint_Angles:
 
         # Limits for each joint
         self.joint_1_limit = None
-        self.joint_2_limit = 2.4
+        self.joint_2_limit = 2.6
         self.joint_3_limit = 2.6
         self.joint_4_limit = 2.8
     
@@ -41,7 +41,7 @@ class Joint_Angles:
         # Error Handling
         # Break if desired frame is outside the workspace
         workspace_limit = self.link_2_length + self.link_3_length + \
-            self.link_4_length
+            self.link_4_length*cos(pitch_angle)
         distance_to_desired_frame = sqrt(x_coordinate**2 + y_coordinate**2 + \
             (z_coordinate - self.link_1_length)**2)
         if distance_to_desired_frame > workspace_limit:
@@ -139,24 +139,27 @@ def main():
     robot = Joint_Angles()
 
     # Get coordinates and pitch of the desired frame.
+    print("\n", "Inputs: ___________________________________________________")
     x_coordinate = float(input("x_coordinate: "))
     y_coordinate = float(input("y_coordinate: "))
     z_coordinate = float(input("z_coordinate: "))
     pitch_angle = float(input("pitch_angle: "))
+    print("___________________________________________________________", "\n")
     
     # Find the joint angle that reach the desired frame.
     robot.find_joint_angles(x_coordinate,y_coordinate,z_coordinate,pitch_angle)
 
     # Print desired joint angles to the terminal (rad)
-    print(robot.joint_4_desired_angle, robot.joint_3_desired_angle, \
+    print("\n", robot.joint_4_desired_angle, robot.joint_3_desired_angle, \
     robot.joint_2_desired_angle, robot.joint_1_desired_angle)
+    
     # Print desired joint angles to the terminal (deg)
-    print((robot.joint_4_desired_angle*(180/pi), robot.joint_3_desired_angle*(180/pi), \
+    print("\n", (robot.joint_4_desired_angle*(180/pi), robot.joint_3_desired_angle*(180/pi), \
         robot.joint_2_desired_angle*(180/pi), (robot.joint_1_desired_angle)*(180/pi)))
     
     # Plot the robot
-    # robot.plot_robot(robot.joint_1_desired_angle, ((pi/2)-robot.joint_2_desired_angle), \
-    #     (-robot.joint_3_desired_angle), (robot.joint_4_desired_angle))
+    robot.plot_robot(robot.joint_1_desired_angle, ((pi/2)-robot.joint_2_desired_angle), \
+        (-robot.joint_3_desired_angle), (robot.joint_4_desired_angle))
 
 
 if __name__ == '__main__':
