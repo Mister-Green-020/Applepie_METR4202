@@ -5,31 +5,37 @@ import pigpio
 from std_msgs.msg import Bool
 
 
-def gripper_callback(open: Bool):
-    """
-    Callback function for the gripper which takes in a Boolean message from a topic
-    """
-    if open:
-        rpi.set_servo_pulsewidth(18, 1000)
+class Gripper() :
+    def __init__(self) :
+        self.sub = rospy.Subscriber('/desired_gripper_position', Bool, self.gripper_callback)
+        self.pub = rospy.Publisher('/gripper_position', Bool, queue_size=10)
+        self.rpi = pigpio.pi()
+        self.rpi.set_mode(18, pigpio.OUTPUT)
+
+        self.open = 1000
+        self.close = 1500
+
+
+
+    def gripper_callback(open: Bool, self):
+        """
+        Callback function for the gripper which takes in a Boolean message from a topic
+        """
+
+        if open:
+            self.rpi.set_servo_pulsewidth(18, self.open)
+            
+        else:
+            self.rpi.set_servo_pulsewidth(18, self.close)
         
-    else:
-        rpi.set_servo_pulsewidth(18, 1500)
-    
-    gripper_publisher.publish(open)
+        self.pub.publish(open)
     
         
 
 def main() :
-    global rpi
-    global gripper_publisher
-
-    rpi = pigpio.pi()
-    rpi.set_mode(18, pigpio.OUTPUT)
-
     rospy.init_node('gripper')
-    rospy.Subscriber('/desired_gripper_position', Bool, gripper_callback)
-    
-    gripper_publisher = rospy.Publisher('/gripper_position', Bool, queue_size=10)
+    gripper = Gripper()
+
     rospy.Rate(10)
     rospy.spin()
 

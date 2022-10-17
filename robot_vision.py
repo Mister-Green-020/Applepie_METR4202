@@ -42,6 +42,8 @@ class RobotVision:
     def image_received(self, fiducialTransformArray: FiducialTransformArray) -> None: 
         """
         http://docs.ros.org/en/kinetic/api/fiducial_msgs/html/msg/FiducialTransformArray.html
+        
+        Callback function for fiducial transforms (positions of block)
         """
         fiducial_transforms = fiducialTransformArray.transforms
         # For collision checking (in bounds to be grabbed)
