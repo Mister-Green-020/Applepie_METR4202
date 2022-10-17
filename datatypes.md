@@ -10,7 +10,14 @@ For my own personal reference and understanding how to connect data types togeth
 - fiducial_msgs/Fiducial[] fiducials
     - int32 fiducial_id
     - int32 direction
-    - float64 x0, y0 - x3, y3
+    - float64 x0
+    - float64 y0
+    - float64 x1
+    - float64 y1
+    - float64 x2
+    - float64 y2
+    - float64 x3
+    - float64 y3
 
 ## Pose
 - geometry_msgs/Point position
@@ -21,6 +28,7 @@ For my own personal reference and understanding how to connect data types togeth
     - float64 x
     - float64 y
     - float64 z
+    - float64 w
 
 ## Joint States
 - std_msgs/Header header

@@ -4,8 +4,12 @@ METR4202 Sem 2 2022 Group Project.
 - Understanding ROS Nodes: http://cdn.joshua-wallace.com/metr4202.png
 - State machine logic: http://cdn.joshua-wallace.com/statemachine.png
 
+- New tasks to do
+    - Generate the locations of 4 drop zones relative to robot base in state_machine.py
+    - Determine transformation matrix from camera down to robot base in robot_vision.py
+    - Begin generating launch file for all nodes (must be done on RPi)
+
 ## Nodes
-- Note XXXXXXXX = 31702051
 - joint_publisher.py
     - Given a desired pose (3D point to move to), computes the required angles to achieve the pose
     - Subscribes To
@@ -41,10 +45,11 @@ METR4202 Sem 2 2022 Group Project.
         - flip gripper 90 degrees to detect block colour
 - Camera
     - Take picture (metr4202_ximea_ros/.../example_camera.py)
-    - interpert camera data
+    - interpret camera data
         - get coordinates of blocks
             - frame transform using modern robotics library
         - determine block colour (metr4202_ximea_ros/.../ximea_color_detect.cpp)
+
 
 ## Terminal Set Up:
 
