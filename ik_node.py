@@ -7,14 +7,10 @@ from geometry_msgs.msg import Pose
 from sensor_msgs.msg import JointState
 
 from ast import increment_lineno
-from math import atan2, pi, sqrt, cos, sin
 import joint_angles
 from constants import *
 
 from mpl_toolkits import mplot3d
-
-import numpy as np
-import matplotlib.pyplot as plt
 
 class InverseKinematics:
 
