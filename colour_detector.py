@@ -7,7 +7,10 @@ from fiducial_msgs.msg import FiducialArray
 from sensor_msgs.msg import Image
 from std_msgs.msg import ColorRGBA
 from cv_bridge import CvBridge, CvBridgeError
-SERIAL = '31702051'
+from constants import serial
+
+# Camera serial number
+SERIAL = serial
 
 class ColourDetector() :
     def __init__(self, serial) :
