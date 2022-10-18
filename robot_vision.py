@@ -8,7 +8,7 @@ from geometry_msgs.msg import Pose, Point
 from fiducial_msgs.msg import FiducialTransformArray
 
 from ast import increment_lineno
-from math import atan2, pi, sqrt, cos, sin
+from constants import *
 
 from mpl_toolkits import mplot3d
 
@@ -21,10 +21,10 @@ class RobotVision:
     def __init__(self) :
         # Frame Transform from robot base to camera, needs to be filled in
         self.T_rc = np.array(
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1]
+            [0, 1,  0, camera_x],
+            [1, 0,  0, camera_y],
+            [0, 0, -1, camera_z],
+            [0, 0,  0, 1]
         )
 
         self.pub = rospy.Publisher('block_positions', Pose, queue_size=10)
