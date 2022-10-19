@@ -37,7 +37,7 @@ class InverseKinematics:
         
 
         # Publish desired joint states to Dynamixel Interface
-        # Create publish message
+        # Create publish message for 4 joints and position
         msg = JointState(
             header = Header(stamp=rospy.Time.now()),
             name = ['joint_1', 'joint_2', 'joint_3', 'joint_4'],

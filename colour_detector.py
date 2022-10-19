@@ -3,6 +3,7 @@
 # Code adapted from https://github.com/UQ-METR4202/metr4202_ximea_ros/blob/main/ximea_color/src/example_camera.py
 
 import rospy
+import cv2
 from fiducial_msgs.msg import FiducialArray
 from sensor_msgs.msg import Image
 from std_msgs.msg import ColorRGBA
@@ -16,7 +17,6 @@ class ColourDetector() :
     def __init__(self, serial) :
         self.bridge = CvBridge()
         self.serial = serial
-
 
         self.camera_sub = rospy.Subscriber(f'/ximea_ros/ximea_{self.serial}/image_raw', Image, self.camera_callback)
         self.id_sub = rospy.Subscriber('/block_fiducials', FiducialArray, self.fiducials_callback)
@@ -57,6 +57,17 @@ def main() :
     rospy.Rate(10)
     rospy.spin()
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
+#     main()
+
+if __name__ == '__main__' :  
     main()
+    try:
+        while not rospy.is_shutdown():
+            if img is not None:
+                cv2.imshow("Image", img)
+                cv2.waitKey(1)
+    except KeyboardInterrupt:
+        print("Shutting down")
+    cv2.destroyAllWindows()
     
