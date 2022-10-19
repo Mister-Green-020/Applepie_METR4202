@@ -12,4 +12,4 @@ serial = '31702051'
 # Camera location relative robot base
 camera_x = 190
 camera_y = 0
-camera_z = 400
+camera_z = 450
