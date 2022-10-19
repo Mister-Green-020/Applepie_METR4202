@@ -207,8 +207,6 @@ def main():
         smach.StateMachine.add('ReleaseBlock', InitialState(), 
                         transitions={'released':'InitialState'})
         
-
-
     # Execute SMACH plan
     outcome = sm.execute()
     rospy.spin()
