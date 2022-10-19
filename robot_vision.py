@@ -6,6 +6,7 @@ from std_msgs.msg import Header, String
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Pose, Point
 from fiducial_msgs.msg import FiducialTransformArray
+import modern_robotics as mr
 
 from ast import increment_lineno
 from constants import *
@@ -78,7 +79,11 @@ class RobotVision:
             return True
         
         return False
-
+    
+    def camera_to_base(self, fid_t: FiducialTransform) -> Point:
+        return Point(
+            
+        )
 
 
 def main(): 
