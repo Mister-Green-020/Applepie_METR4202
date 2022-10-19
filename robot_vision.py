@@ -78,8 +78,15 @@ class RobotVision:
             return True
         
         return False
+    def camera_to_base(self, fid_t, FiducialTransform):
+        '''Take camera traslation and rotation and return base rotation.postion '''
+        p1 = np.array([fid_t.translation.x, fid_t.translation.y, fid_t.translation.z])
+        R1 = np.array([[fid_t.rotation.x,0,0],[0,fid_t.rotation.y,0],[0,0,fid_t.rotation.z]])
 
+        t_1 = mr.RpToTrans(R1, p1)
+        t_2 = t_1 @ self.T_rc
 
+        R2, p2 = mr.TransToRp(t_2)
 
 def main(): 
     rospy.init_node('robot_vision', anonymous=True)
