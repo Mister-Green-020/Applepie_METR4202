@@ -117,6 +117,33 @@ class GrabBlock(smach.State):
         self.gripper.publish(False)
         return 'grabbed'
 
+class MoveToIdentifyPosition(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['identified'])
+        self.checking_pose = Pose(
+            x=0,
+            y=200,
+            z=40,
+        )
+        self.pos_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
+
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing identify position')
+        self.new_position.publish(self.checking_pose)
+        return 'ready_to_identify'
+
+class IdentifyBlock(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['identified'])
+        self.pos_pub = rospy.Subscriber('/new_position', Pose, queue_size=10)
+
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing identify position')
+        self.new_position.publish(self.checking_pose)
+        return 'ready_to_identify'
+
 
 class MoveToDrop(smach.State):
     def __init__(self):
