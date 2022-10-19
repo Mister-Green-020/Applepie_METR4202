@@ -135,26 +135,26 @@ class MoveToDrop(smach.State):
         zone = 1
 
         if zone == 1:
-            move_to.point.x = 0
-            move_to.point.y = 0
+            move_to.point.x = -50
+            move_to.point.y = 150
             move_to.point.z = 0
             self.zone_1_blocks += 1
 
         elif zone == 2:
-            move_to.point.x = 0
-            move_to.point.y = 0
+            move_to.point.x = -150
+            move_to.point.y = 50
             move_to.point.z = 0
             self.zone_2_blocks += 1
 
         elif zone == 3 :
-            move_to.point.x = 0
-            move_to.point.y = 0
+            move_to.point.x = -150
+            move_to.point.y = -50
             move_to.point.z = 0
             self.zone_3_blocks += 1
 
         else :
-            move_to.point.x = 0
-            move_to.point.y = 0
+            move_to.point.x = -50
+            move_to.point.y = -150
             move_to.point.z = 0
             self.zone_4_blocks += 1
 
