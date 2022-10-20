@@ -120,6 +120,7 @@ class GrabBlock(smach.State):
 class MoveToIdentifyPosition(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['identified'])
+        # Position with gripper angled        
         self.checking_pose = Pose(
             x=0,
             y=200,
@@ -131,18 +132,21 @@ class MoveToIdentifyPosition(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing identify position')
         self.new_position.publish(self.checking_pose)
-        return 'ready_to_identify'
+        return 'in_identify_position'
 
 class IdentifyBlock(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['identified'])
-        self.pos_pub = rospy.Subscriber('/new_position', Pose, queue_size=10)
-
+        self.colour_sub = rospy.Subscriber('/central_colour', String, queue_size=10)
+        self.colour = 0
 
     def execute(self, userdata):
-        rospy.loginfo('Executing identify position')
-        self.new_position.publish(self.checking_pose)
-        return 'ready_to_identify'
+
+        while (self.colour == 0) :
+            rospy.loginfo('Waiting for colour')
+
+        # Pass colour to next state
+        return 'identified'
 
 
 class MoveToDrop(smach.State):
@@ -226,7 +230,13 @@ def main():
                         remapping={'block_transform':'sm_block_transform'})
 
         smach.StateMachine.add('GrabBlock', GrabBlock(), 
-                        transitions={'grabbed':'MoveToBlock'})
+                        transitions={'grabbed':'MoveToIdentifyPosition'})
+        
+        smach.StateMachine.add('MoveToIdentifyPosition', MoveToIdentifyPosition(), 
+                        transitions={'in_identify_position':'IdentifyBlock'})
+
+        smach.StateMachine.add('IdentifyBlock', MoveToIdentifyPosition(), 
+                        transitions={'identified':'MoveToDrop'})
 
         smach.StateMachine.add('MoveToDrop', ReleaseBlock(), 
                         transitions={'drop_positioned':'ReleaseBlock'})

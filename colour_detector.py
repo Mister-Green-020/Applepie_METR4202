@@ -14,19 +14,24 @@ from constants import serial
 SERIAL = serial
 
 class ColourDetector() :
-    def __init__(self, serial) :
+    def __init__(self) :
         self.bridge = CvBridge()
-        self.serial = serial
+        self.serial = SERIAL
 
         self.camera_sub = rospy.Subscriber(f'/ximea_ros/ximea_{self.serial}/image_raw', Image, self.camera_callback)
-        self.id_sub = rospy.Subscriber('/block_fiducials', FiducialArray, self.fiducials_callback)
-        self.pub = rospy.Publisher('/block_colour', ColorRGBA, queue_size=10)
+        # self.id_sub = rospy.Subscriber('/block_fiducials', FiducialArray, self.fiducials_callback)
+        self.pub = rospy.Publisher('/central_colour', ColorRGBA, queue_size=10)
+        
+        self.camera_height = 612
+        self.camera_width = 540
 
 
-    def camera_callback(data: Image, self):
+    def camera_callback(self, data: Image):
         """
         Identify colour of image?
         """
+
+        # Given an image, we index the middle pixels
         global img
         try:
             img = self.bridge.imgmsg_to_cv2(data, "bgr8")
@@ -39,10 +44,11 @@ class ColourDetector() :
         color.r = bgr[2]
         color.g = bgr[1]
         color.b = bgr[0]
+
         self.pub.publish(color)
 
 
-    def fiducials_callback(data: FiducialArray, self):
+    def camera_callback(data: FiducialArray, self):
         """
         Get colour of specific block using FiducialArray ID
         """
@@ -51,8 +57,8 @@ class ColourDetector() :
     
 
 def main() :
-    rospy.init_node('block_colours')
-    colours = ColourDetector(SERIAL)
+    rospy.init_node('colour_detector')
+    colours = ColourDetector()
 
     rospy.Rate(10)
     rospy.spin()
