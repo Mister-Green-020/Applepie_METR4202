@@ -95,7 +95,8 @@ class Joint_Angles:
         axes.set_zlabel("Z")
         
         # Plot Link 1
-        # Link 1 pivots about (0,0,0)
+        # Link 1 pivots about (0,0,0)0.240.24
+        0
         link_1_x_start = 0
         link_1_y_start = 0
         link_1_z_start = 0
