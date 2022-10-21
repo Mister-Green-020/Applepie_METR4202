@@ -8,7 +8,7 @@ from fiducial_msgs.msg import FiducialArray
 from sensor_msgs.msg import Image
 from std_msgs.msg import ColorRGBA, String
 from cv_bridge import CvBridge, CvBridgeError
-from constants import serial
+from constants import serial, cam_h, cam_w
 
 # Camera serial number
 SERIAL = serial
@@ -21,32 +21,48 @@ class ColourDetector() :
         self.camera_sub = rospy.Subscriber(f'/ximea_ros/ximea_{self.serial}/image_raw', Image, self.camera_callback)
         self.pub = rospy.Publisher('/central_colour', ColorRGBA, queue_size=10)
         
-        self.camera_height = 612
-        self.camera_width = 540
+        self.camera_height = cam_h
+        self.camera_width = cam_w
 
-    def camera_callback(self, data: Image):
+    def camera_callback(self, img: Image):
         """
-        Identify colour of pixel
+        Identify colour the very middle pixel where the block lays
         """
 
         # Given an image, we index the middle pixels
-        pixel = Image[3*self.camera_height*self.camera_width/2]
-        global img
+        img_subset = img.data[3 * self.camera_height * self.camera_width / 2 : 3 * self.camera_height * self.camera_width/2 + 3]
+
         try:
-            img = self.bridge.imgmsg_to_cv2(pixel, "bgr8")
+            subset_rgb = self.bridge.imgmsg_to_cv2(img_subset, "bgr8")
         except CvBridgeError as e:
             print(e)
 
-        bgr = img[img.shape[0] // 2, img.shape[1] // 2, :]
-        color = ColorRGBA()
-        # color.a = bgr[3]
-        color.r = bgr[2]
-        color.g = bgr[1]
-        color.b = bgr[0]
+        bgr = subset_rgb[subset_rgb.shape[0] // 2, subset_rgb.shape[1] // 2, :]
+        colour = ColorRGBA(
+            r = bgr[2],
+            g = bgr[1],
+            b = bgr[0]
+        )
 
-        # Use RGB values to compute a dominant colour
+        msg = String(
+            data = self.colour_identifier(colour)
+        )
 
-        self.pub.publish(color)
+        self.pub.publish(msg)
+    
+    def colour_identifier(self, rgba : ColorRGBA) -> String :
+        if (rgba.r > rgba.g and rgba.r > rgba.b) :
+            msg = "red"
+        elif (rgba.g > rgba.r and rgba.g > rgba.b) :
+            msg = "green"
+        elif (rgba.b > rgba.r and rgba.b > rgba.g) :
+            msg = "blue"
+        else :
+            msg = "yellow"
+        
+        return String(
+            data=msg
+        )
 
 def main() :
     rospy.init_node('colour_detector')
@@ -57,12 +73,12 @@ def main() :
 
 if __name__ == '__main__' :  
     main()
-    try:
-        while not rospy.is_shutdown():
-            if img is not None:
-                cv2.imshow("Image", img)
-                cv2.waitKey(1)
-    except KeyboardInterrupt:
-        print("Shutting down")
-    cv2.destroyAllWindows()
+    # try:
+    #     while not rospy.is_shutdown():
+    #         if img is not None:
+    #             cv2.imshow("Image", img)
+    #             cv2.waitKey(1)
+    # except KeyboardInterrupt:
+    #     print("Shutting down")
+    # cv2.destroyAllWindows()
     

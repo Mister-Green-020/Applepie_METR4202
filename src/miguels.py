@@ -20,7 +20,7 @@ class CameraViewer:
     self.color_pub = rospy.Publisher("/test_color", ColorRGBA, queue_size=10)
     self.test_pub = rospy.Publisher("/data_length", String, queue_size=10)
 
-  def callback(self,data):
+  def callback(self, data):
     global img
     try:
       img = self.bridge.imgmsg_to_cv2(data, "bgr8")

@@ -14,5 +14,5 @@ serial = '31702051'
 camera_x = 190
 camera_y = 0
 camera_z = 400
-camera_height = 640
-camera_width = 512
+cam_h = 640
+cam_w = 512
