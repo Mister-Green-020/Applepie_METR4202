@@ -40,6 +40,10 @@ class Joint_Angles:
             base of the arm.
             pitch_angle (int): angle of the claw in radians, at the desired frame.
         """
+        # Set colour sensing pitch angle to alpha=0
+        if z_coordinate > 100: #z>10cm
+            pitch_angle = 0
+
         # Error Handling
         # Break if desired frame is outside the workspace
         workspace_limit = self.link_2_length + self.link_3_length + \
@@ -53,7 +57,7 @@ class Joint_Angles:
         # Determining the desired angle of joint 3 and 2.
         # Coordinates of joint 4 in relation to joint 2
         joint_4_xy = sqrt(x_coordinate**2 + y_coordinate**2) - self.link_4_length*cos(pitch_angle)
-        joint_4_z = z_coordinate - self.link_1_length - self.link_4_length*\
+        joint_4_z = z_coordinate + self.link_1_length + self.link_4_length*\
             sin(pitch_angle)
         
         # Determine angle of joint 3.
