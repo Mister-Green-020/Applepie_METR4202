@@ -36,7 +36,7 @@ def camera_to_base(fid_t):
     t_1 = mr.RpToTrans(R1, p1)
     t_2 = T_rc @ t_1
 
-    R2, p2 = mr.TransToRp(t_2)
+    _, p2 = mr.TransToRp(t_2)
 
     return p2
 
