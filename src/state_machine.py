@@ -7,6 +7,7 @@ import smach_ros
 from std_msgs.msg import String, Bool
 from geometry_msgs.msg import Pose, Point, Quaternion, Vector3
 import numpy as np
+from constants import *
 
 class Setup(smach.State):
     """
@@ -16,12 +17,7 @@ class Setup(smach.State):
         smach.State.__init__(self, outcomes=['setup'])
         self.position_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
         self.camera_pub = rospy.Publisher('/ximea_ros/show_rgb', Bool, queue_size=10)
-        self.setup_state = Pose()
-
-        # Need someone to set these to fully upright (all joints straight)
-        self.setup_state.position.x = 0
-        self.setup_state.position.y = 0
-        self.setup_state.position.z = constants.L1 + constants.L2 + constants.L3 + constants.L4
+        self.setup_state = setup_pose
 
 
     def execute(self, userdata):
@@ -44,16 +40,7 @@ class InitialState(smach.State):
         smach.State.__init__(self, outcomes=['initialised'])
         self.new_position = rospy.Publisher('/new_position', Pose, queue_size=10)
         self.gripper_open = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
-        self.initial_config = Pose()
-        
-        # Need someone to set these to L joint ->
-        #    First joint straight
-        #    Second joint at 90 deg
-        #    third and fourth straight
-        self.setup_state.position.x = 0
-        self.setup_state.position.y = constants.L3 + constants.L4
-        self.setup_state.position.z = constants.L1 + constants.L2
-
+        self.initial_config = init_pose
 
     def execute(self, userdata):
         rospy.loginfo('Executing state Initial')
@@ -83,7 +70,8 @@ class FindBlock(smach.State):
         rospy.loginfo('Executing state FindBlock')
         
         while not self.block_found :
-            rospy.sleep(1)
+            pass
+
         rospy.loginfo('Position found')
 
         userdata.block_transform = self.transform
@@ -120,12 +108,7 @@ class GrabBlock(smach.State):
 class MoveToIdentifyPosition(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['identified'])
-        # Position with gripper angled        
-        self.checking_pose = Pose(
-            x=0,
-            y=200,
-            z=40,
-        )
+        self.checking_pose = id_pose
         self.pos_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
 
 
@@ -137,7 +120,7 @@ class MoveToIdentifyPosition(smach.State):
 class IdentifyBlock(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['identified'])
-        self.colour_sub = rospy.Subscriber('/central_colour', String, queue_size=10)
+        self.colour_sub = rospy.Subscriber('/block_colour', String, queue_size=10)
         self.colour = 0
 
     def execute(self, userdata):
@@ -152,7 +135,7 @@ class IdentifyBlock(smach.State):
 class MoveToDrop(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['drop_positioned'])
-        self.new_position = rospy.Publisher('/new_position', Pose, queue_size=10)
+        self.sub = rospy.Publisher('/new_position', Pose, queue_size=10)
         self.zone_1_blocks = 0
         self.zone_2_blocks = 0
         self.zone_3_blocks = 0
@@ -160,36 +143,20 @@ class MoveToDrop(smach.State):
 
     def execute(self, userdata):
         rospy.loginfo('Executing state MoveToDrop')
-        move_to = Pose()
 
-        # Some way to associate colours with enum
-        zone = 1
-
-        if zone == 1:
-            move_to.point.x = -50
-            move_to.point.y = 150
-            move_to.point.z = 0
+        colour = "red"
+        if colour == red_zone.colour :
+            self.pose_pub.publish(red_zone.pose)
             self.zone_1_blocks += 1
-
-        elif zone == 2:
-            move_to.point.x = -150
-            move_to.point.y = 50
-            move_to.point.z = 0
+        elif colour == blue_zone.colour :
+            self.pose_pub.publish(blue_zone.pose)
             self.zone_2_blocks += 1
-
-        elif zone == 3 :
-            move_to.point.x = -150
-            move_to.point.y = -50
-            move_to.point.z = 0
+        if colour == green_zone.colour :
+            self.pose_pub.publish(green_zone.pose)
             self.zone_3_blocks += 1
-
-        else :
-            move_to.point.x = -50
-            move_to.point.y = -150
-            move_to.point.z = 0
+        elif colour == yellow_zone.colour :
+            self.pose_pub.publish(yellow_zone.pose)
             self.zone_4_blocks += 1
-
-        self.new_position.publish(move_to)
         
         return 'drop_positioned'
 

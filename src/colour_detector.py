@@ -19,7 +19,7 @@ class ColourDetector() :
         self.serial = SERIAL
 
         self.camera_sub = rospy.Subscriber(f'/ximea_ros/ximea_{self.serial}/image_raw', Image, self.camera_callback)
-        self.pub = rospy.Publisher('/central_colour', ColorRGBA, queue_size=10)
+        self.pub = rospy.Publisher('/block_colour', ColorRGBA, queue_size=10)
         
         self.camera_height = cam_h
         self.camera_width = cam_w
