@@ -4,6 +4,29 @@ METR4202 Sem 2 2022 Group Project.
 - Understanding ROS Nodes: http://cdn.joshua-wallace.com/metr4202.png
 - State machine logic: http://cdn.joshua-wallace.com/statemachine.png
 
+## Running
+- Setup Commands
+```console
+sudo pigpiod
+echo 0 | sudo tee /sys/module/usbcore/parameters/usbfs_memory_mb
+catkin_make
+```
+- Provided Packages
+```console
+roslaunch dynamixel_interface dynamixel_interface_controller.launch
+rosrun ximea_ros ximea_demo
+roslaunch ximea_ros ximea_aruco.launch serial:=31702051
+```
+- Our Nodes
+```console
+python3 ik_node.py
+python3 gripper.py
+python3 robot_vision.py
+python3 state_machine.py
+python3 colour_detector.py
+```
+
+
 ## Nodes
 - joint_publisher.py
     - Given a desired pose (3D point to move to), computes the required angles to achieve the pose
@@ -70,11 +93,11 @@ rosrun ximea_ros ximea_demo
 rosrun camera_calibration cameracalibrator.py --size 9x6 --square 0.024 image:=/ximea_cam/ximea_31702051/image_raw camera:=/ximea_cam/ximea_31702051
 ```
 
-## ArUca Tag Detection
+## ArUco Tag Detection
 ```console
 roslaunch ximea_ros ximea_aruco.launch serial:=31702051
 ```
-## ArUca Tag Locations
+## ArUco Tag Locations
 ```console
 rosrun ximea_ros ximea_demo
 rostopic echo /fiducial_transforms
