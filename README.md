@@ -4,11 +4,6 @@ METR4202 Sem 2 2022 Group Project.
 - Understanding ROS Nodes: http://cdn.joshua-wallace.com/metr4202.png
 - State machine logic: http://cdn.joshua-wallace.com/statemachine.png
 
-- New tasks to do
-    - Generate the locations of 4 drop zones relative to robot base in state_machine.py
-    - Determine transformation matrix from camera down to robot base in robot_vision.py
-    - Begin generating launch file for all nodes (must be done on RPi)
-
 ## Nodes
 - joint_publisher.py
     - Given a desired pose (3D point to move to), computes the required angles to achieve the pose
@@ -45,14 +40,12 @@ METR4202 Sem 2 2022 Group Project.
         - flip gripper 90 degrees to detect block colour
 - Camera
     - Take picture (metr4202_ximea_ros/.../example_camera.py)
-    - interpret camera data
+    - interpert camera data
         - get coordinates of blocks
             - frame transform using modern robotics library
         - determine block colour (metr4202_ximea_ros/.../ximea_color_detect.cpp)
 
-
-## Terminal Set Up:
-
+## Robot Set Up:
 ```console
 cd ~/catkin_ws
 catkin_make
@@ -65,6 +58,10 @@ rostopic pub /desired_joint_states /msg_JointState [TAB]
 echo 0 | sudo tee /sys/module/usbcore/parameters/usbfs_memory_mb
 ```
 
+## Camera Set Up:
+```console
+rostopic pub /ximea_ros/show_rgb std_msgs/Bool "data: true" 
+```
 
 ## Camera Calibration:
 ```console
@@ -76,6 +73,11 @@ rosrun camera_calibration cameracalibrator.py --size 9x6 --square 0.024 image:=/
 ## ArUca Tag Detection
 ```console
 roslaunch ximea_ros ximea_aruco.launch serial:=31702051
+```
+## ArUca Tag Locations
+```console
+rosrun ximea_ros ximea_demo
+rostopic echo /fiducial_transforms
 ```
 
 ## GitHub Assistance

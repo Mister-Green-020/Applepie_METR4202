@@ -22,7 +22,7 @@ class Joint_Angles:
 
         # Limits for each joint
         self.joint_1_limit = None
-        self.joint_2_limit = 2.4
+        self.joint_2_limit = 2.6
         self.joint_3_limit = 2.6
         self.joint_4_limit = 2.8
     
@@ -40,23 +40,24 @@ class Joint_Angles:
             base of the arm.
             pitch_angle (int): angle of the claw in radians, at the desired frame.
         """
+        # Set colour sensing pitch angle to alpha=0
+        if z_coordinate > 100: #z>10cm
+            pitch_angle = 0
+
         # Error Handling
         # Break if desired frame is outside the workspace
         workspace_limit = self.link_2_length + self.link_3_length + \
-            self.link_4_length
+            self.link_4_length*cos(pitch_angle)
         distance_to_desired_frame = sqrt(x_coordinate**2 + y_coordinate**2 + \
             (z_coordinate - self.link_1_length)**2)
         if distance_to_desired_frame > workspace_limit:
             print("Error: Desired frame is out of range.")
             return None
 
-        # Determining the desired angle of joint 1:
-        self.joint_1_desired_angle = atan2(y_coordinate, x_coordinate)
-        
         # Determining the desired angle of joint 3 and 2.
         # Coordinates of joint 4 in relation to joint 2
         joint_4_xy = sqrt(x_coordinate**2 + y_coordinate**2) - self.link_4_length*cos(pitch_angle)
-        joint_4_z = z_coordinate - self.link_1_length - self.link_4_length*\
+        joint_4_z = z_coordinate + self.link_1_length + self.link_4_length*\
             sin(pitch_angle)
         
         # Determine angle of joint 3.
@@ -79,6 +80,17 @@ class Joint_Angles:
         # Convert angles to robot orientation.
         self.joint_2_desired_angle = (pi/2) - self.joint_2_desired_angle
         self.joint_3_desired_angle = -self.joint_3_desired_angle
+
+        # Flip robot for negative x coordinates. Alows full range of movement behind the robot.
+        if x_coordinate < 0:
+            x_coordinate = -x_coordinate
+            self.joint_2_desired_angle = -self.joint_2_desired_angle
+            self.joint_3_desired_angle = -self.joint_3_desired_angle
+            self.joint_4_desired_angle = -self.joint_4_desired_angle
+
+        # Determining the desired angle of joint 1:
+        self.joint_1_desired_angle = atan2(y_coordinate, x_coordinate)
+        
 
     def plot_robot(self, joint_angle_1, joint_angle_2, joint_angle_3, joint_angle_4) -> None:
         # Plots the robot configuration for debugging
@@ -141,24 +153,27 @@ def main():
     robot = Joint_Angles()
 
     # Get coordinates and pitch of the desired frame.
+    print("\n", "Inputs: ___________________________________________________")
     x_coordinate = float(input("x_coordinate: "))
     y_coordinate = float(input("y_coordinate: "))
     z_coordinate = float(input("z_coordinate: "))
     pitch_angle = float(input("pitch_angle: "))
+    print("___________________________________________________________", "\n")
     
     # Find the joint angle that reach the desired frame.
     robot.find_joint_angles(x_coordinate,y_coordinate,z_coordinate,pitch_angle)
 
     # Print desired joint angles to the terminal (rad)
-    print(robot.joint_4_desired_angle, robot.joint_3_desired_angle, \
+    print("\n", robot.joint_4_desired_angle, robot.joint_3_desired_angle, \
     robot.joint_2_desired_angle, robot.joint_1_desired_angle)
+    
     # Print desired joint angles to the terminal (deg)
-    print((robot.joint_4_desired_angle*(180/pi), robot.joint_3_desired_angle*(180/pi), \
+    print("\n", (robot.joint_4_desired_angle*(180/pi), robot.joint_3_desired_angle*(180/pi), \
         robot.joint_2_desired_angle*(180/pi), (robot.joint_1_desired_angle)*(180/pi)))
     
     # Plot the robot
-    # robot.plot_robot(robot.joint_1_desired_angle, ((pi/2)-robot.joint_2_desired_angle), \
-    #     (-robot.joint_3_desired_angle), (robot.joint_4_desired_angle))
+    robot.plot_robot(robot.joint_1_desired_angle, ((pi/2)-robot.joint_2_desired_angle), \
+        (-robot.joint_3_desired_angle), (robot.joint_4_desired_angle))
 
 
 if __name__ == '__main__':

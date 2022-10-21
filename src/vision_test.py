@@ -40,4 +40,4 @@ def camera_to_base(fid_t):
 
     return p2
 
-print(camera_to_base(T))
+print(camera_to_base(T)[1])
