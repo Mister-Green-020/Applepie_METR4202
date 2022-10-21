@@ -8,12 +8,14 @@ from geometry_msgs.msg import Pose, Point
 from fiducial_msgs.msg import FiducialTransformArray
 
 from ast import increment_lineno
-from math import atan2, pi, sqrt, cos, sin
+from constants import *
 
 from mpl_toolkits import mplot3d
 
 import numpy as np
 import matplotlib.pyplot as plt
+
+import modern_robotics as mr
 
 class RobotVision:
 
@@ -21,10 +23,10 @@ class RobotVision:
     def __init__(self) :
         # Frame Transform from robot base to camera, needs to be filled in
         self.T_rc = np.array(
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1]
+            [0, 1,  0, camera_x],
+            [1, 0,  0, camera_y],
+            [0, 0, -1, camera_z],
+            [0, 0,  0, 1]
         )
 
         self.pub = rospy.Publisher('block_positions', Pose, queue_size=10)
@@ -42,6 +44,8 @@ class RobotVision:
     def image_received(self, fiducialTransformArray: FiducialTransformArray) -> None: 
         """
         http://docs.ros.org/en/kinetic/api/fiducial_msgs/html/msg/FiducialTransformArray.html
+        
+        Callback function for fiducial transforms (positions of block)
         """
         fiducial_transforms = fiducialTransformArray.transforms
         # For collision checking (in bounds to be grabbed)
@@ -72,12 +76,21 @@ class RobotVision:
                 Returns: 
                     bool: True if no collisions, False is can collide
         """
+
+
         if (1) :
             return True
         
         return False
+    def camera_to_base(self, fid_t, FiducialTransform):
+        '''Take camera traslation and rotation and return base rotation.postion '''
+        p1 = np.array([fid_t.translation.x, fid_t.translation.y, fid_t.translation.z])
+        R1 = np.array([[fid_t.rotation.x,0,0],[0,fid_t.rotation.y,0],[0,0,fid_t.rotation.z]])
 
+        t_1 = mr.RpToTrans(R1, p1)
+        t_2 = t_1 @ self.T_rc
 
+        R2, p2 = mr.TransToRp(t_2)
 
 def main(): 
     rospy.init_node('robot_vision', anonymous=True)

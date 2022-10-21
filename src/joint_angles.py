@@ -1,16 +1,18 @@
 from math import atan2, pi, sqrt, cos, sin
 import matplotlib.pyplot as plt
 
+from constants import *
+
 
 class Joint_Angles:
     def __init__(self):
         # Class containing the joint angles (radians) of the robot.
 
         # Links lengths
-        self.link_1_length = 115
-        self.link_2_length = 117
-        self.link_3_length = 95
-        self.link_4_length = 115
+        self.link_1_length = L1
+        self.link_2_length = L2
+        self.link_3_length = L3
+        self.link_4_length = L4
 
         # Desired angle of each joint
         self.joint_1_desired_angle = 0

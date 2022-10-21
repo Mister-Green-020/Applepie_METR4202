@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import constants
 import roslib
 import rospy 
 import smach
@@ -21,15 +21,15 @@ class Setup(smach.State):
         # Need someone to set these to fully upright (all joints straight)
         self.setup_state.position.x = 0
         self.setup_state.position.y = 0
-        self.setup_state.position.z = 100
+        self.setup_state.position.z = constants.L1 + constants.L2 + constants.L3 + constants.L4
 
 
     def execute(self, userdata):
         rospy.loginfo('Executing state setup')
         show_rgb = Bool()
         show_rgb.data = True
-        self.camera_pub(show_rgb)
 
+        self.camera_pub(show_rgb)
         self.position_pub.publish(self.setup_state)
 
         return 'setup'
@@ -51,8 +51,8 @@ class InitialState(smach.State):
         #    Second joint at 90 deg
         #    third and fourth straight
         self.setup_state.position.x = 0
-        self.setup_state.position.y = 0
-        self.setup_state.position.z = 100
+        self.setup_state.position.y = constants.L3 + constants.L4
+        self.setup_state.position.z = constants.L1 + constants.L2
 
 
     def execute(self, userdata):
@@ -135,29 +135,28 @@ class MoveToDrop(smach.State):
         zone = 1
 
         if zone == 1:
-            move_to.transform.translation.x = 0
-            move_to.transform.translation.y = 0
-            move_to.transform.translation.z = 0
+            move_to.point.x = -50
+            move_to.point.y = 150
+            move_to.point.z = 0
             self.zone_1_blocks += 1
 
         elif zone == 2:
-            move_to.transform.translation.x = 0
-            move_to.transform.translation.y = 0
-            move_to.transform.translation.z = 0
+            move_to.point.x = -150
+            move_to.point.y = 50
+            move_to.point.z = 0
             self.zone_2_blocks += 1
 
         elif zone == 3 :
-            move_to.transform.translation.x = 0
-            move_to.transform.translation.y = 0
-            move_to.transform.translation.z = 0
+            move_to.point.x = -150
+            move_to.point.y = -50
+            move_to.point.z = 0
             self.zone_3_blocks += 1
 
         else :
-            move_to.transform.translation.x = 0
-            move_to.transform.translation.y = 0
-            move_to.transform.translation.z = 0
+            move_to.point.x = -50
+            move_to.point.y = -150
+            move_to.point.z = 0
             self.zone_4_blocks += 1
-
 
         self.new_position.publish(move_to)
         
