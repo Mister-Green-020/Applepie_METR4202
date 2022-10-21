@@ -50,9 +50,6 @@ class Joint_Angles:
             print("Error: Desired frame is out of range.")
             return None
 
-        # Determining the desired angle of joint 1:
-        self.joint_1_desired_angle = atan2(y_coordinate, x_coordinate)
-        
         # Determining the desired angle of joint 3 and 2.
         # Coordinates of joint 4 in relation to joint 2
         joint_4_xy = sqrt(x_coordinate**2 + y_coordinate**2) - self.link_4_length*cos(pitch_angle)
@@ -79,6 +76,17 @@ class Joint_Angles:
         # Convert angles to robot orientation.
         self.joint_2_desired_angle = (pi/2) - self.joint_2_desired_angle
         self.joint_3_desired_angle = -self.joint_3_desired_angle
+
+        # Flip robot for negative x coordinates. Alows full range of movement behind the robot.
+        if x_coordinate < 0:
+            x_coordinate = -x_coordinate
+            self.joint_2_desired_angle = -self.joint_2_desired_angle
+            self.joint_3_desired_angle = -self.joint_3_desired_angle
+            self.joint_4_desired_angle = -self.joint_4_desired_angle
+
+        # Determining the desired angle of joint 1:
+        self.joint_1_desired_angle = atan2(y_coordinate, x_coordinate)
+        
 
     def plot_robot(self, joint_angle_1, joint_angle_2, joint_angle_3, joint_angle_4) -> None:
         # Plots the robot configuration for debugging
