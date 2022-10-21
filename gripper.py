@@ -12,21 +12,18 @@ class Gripper() :
         self.rpi = pigpio.pi()
         self.rpi.set_mode(18, pigpio.OUTPUT)
 
-        self.open = 1000
-        self.close = 1500
 
 
-
-    def gripper_callback(open: Bool, self):
+    def gripper_callback(self, open: Bool):
         """
         Callback function for the gripper which takes in a Boolean message from a topic
         """
 
-        if open:
-            self.rpi.set_servo_pulsewidth(18, self.open)
+        if open.data:
+            self.rpi.set_servo_pulsewidth(18, 2000)
             
         else:
-            self.rpi.set_servo_pulsewidth(18, self.close)
+            self.rpi.set_servo_pulsewidth(18, 1500)
         
         self.pub.publish(open)
     

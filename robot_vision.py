@@ -90,11 +90,8 @@ class RobotVision:
         t_1 = mr.RpToTrans(R1, p1)
         t_2 = t_1 @ self.T_rc
 
-<<<<<<< HEAD
-=======
         R2, p2 = mr.TransToRp(t_2)
 
->>>>>>> e6c1d61de0e2159f673fafdfefb6e6c4ca7f6931
 def main(): 
     rospy.init_node('robot_vision', anonymous=True)
     rv = RobotVision()
