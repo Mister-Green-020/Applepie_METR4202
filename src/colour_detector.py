@@ -2,6 +2,7 @@
 
 # Code adapted from https://github.com/UQ-METR4202/metr4202_ximea_ros/blob/main/ximea_color/src/example_camera.py
 
+import string
 import rospy
 import cv2
 from fiducial_msgs.msg import FiducialArray
@@ -15,6 +16,9 @@ SERIAL = serial
 
 class ColourDetector() :
     def __init__(self) :
+        """
+        
+        """
         self.bridge = CvBridge()
         self.serial = SERIAL
 
@@ -30,7 +34,6 @@ class ColourDetector() :
         Identify colour the very middle pixel where the block lays
         """
 
-        # Given an image, we index the middle pixels
         try:
             cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
         except CvBridgeError as e:
@@ -55,7 +58,10 @@ class ColourDetector() :
 
         self.pub.publish(msg)
     
-    def colour_identifier(self, rgba : ColorRGBA) -> String :
+    def colour_identifier(self, rgba : ColorRGBA) -> string :
+        """
+        
+        """
         if (rgba.r > 200 and rgba.g > 200) :
             msg = "'yellow'"
         elif (rgba.r > 220) :
@@ -75,6 +81,7 @@ def main() :
 
     try:
         rospy.spin()
+        
     except KeyboardInterrupt:
         print("Shutting down")
     cv2.destroyAllWindows()

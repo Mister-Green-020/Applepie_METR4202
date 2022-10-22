@@ -28,7 +28,7 @@ class Setup(smach.State):
 
         self.camera_pub.publish(show_rgb)
         self.position_pub.publish(self.setup_state)
-        rospy.sleep(2)
+        rospy.sleep(sleep_s)
 
         return 'setup'
         
@@ -50,7 +50,7 @@ class InitialState(smach.State):
         rospy.loginfo('Executing state Initial')
         self.gripper_pub.publish(self.open_gripper)
         self.pose_pub.publish(self.initial_config)
-        rospy.sleep(2)
+        rospy.sleep(sleep_s)
 
         return 'initialised'
 
@@ -95,7 +95,7 @@ class MoveToBlock(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state Move')
         self.new_position.publish(userdata.block_transform)
-        rospy.sleep(2)
+        rospy.sleep(sleep_s)
         return 'positioned'
         
 
@@ -114,7 +114,7 @@ class GrabBlock(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state GrabBlock')
         self.pub.publish(self.grab)
-        rospy.sleep(2)
+        rospy.sleep(sleep_s)
         return 'grabbed'
 
 class MoveToIdentifyPosition(smach.State):
@@ -130,7 +130,7 @@ class MoveToIdentifyPosition(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing identify position')
         self.pos_pub.publish(self.checking_pose)
-        rospy.sleep(2)
+        rospy.sleep(sleep_s)
         return 'in_identify_position'
 
 
@@ -168,7 +168,6 @@ class MoveToDrop(smach.State):
         rospy.loginfo('Executing state MoveToDrop')
 
         colour = userdata.block_colour
-        rospy.loginfo("Colour assigned")
         if colour == red_zone.colour :
             self.pose_pub.publish(red_zone.pose)
             self.zone_1_blocks += 1
@@ -182,8 +181,7 @@ class MoveToDrop(smach.State):
             self.pose_pub.publish(yellow_zone.pose)
             self.zone_4_blocks += 1
 
-        rospy.loginfo(colour)
-        rospy.sleep(2)
+        rospy.sleep(sleep_s)
         return 'drop_positioned'
 
 
@@ -195,7 +193,7 @@ class ReleaseBlock(smach.State):
             data=True
         )
 
-    def execute(self userdata):
+    def execute(self, userdata):
         rospy.loginfo('Executing state Release')
         self.gripper.publish(self.release)
         return 'released'

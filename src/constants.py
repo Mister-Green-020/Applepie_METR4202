@@ -60,5 +60,11 @@ id_pose = Pose(
     position=id_point
 )
 
+# Sleep
+sleep_s = 1
+# Gripper
+open_val = 2000
+close_val = 1500
+
 
 

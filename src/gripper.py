@@ -3,6 +3,7 @@
 import rospy
 import pigpio
 from std_msgs.msg import Bool
+from constants import open_val, close_val
 
 
 class Gripper() :
@@ -20,10 +21,10 @@ class Gripper() :
         """
 
         if open.data:
-            self.rpi.set_servo_pulsewidth(18, 2000)
+            self.rpi.set_servo_pulsewidth(18, open_val)
             
         else:
-            self.rpi.set_servo_pulsewidth(18, 1500)
+            self.rpi.set_servo_pulsewidth(18, close_val)
         
         self.pub.publish(open)
     
