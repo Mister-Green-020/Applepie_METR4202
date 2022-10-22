@@ -38,14 +38,17 @@ class InitialState(smach.State):
     """
     def __init__(self):
         smach.State.__init__(self, outcomes=['initialised'])
-        self.new_position = rospy.Publisher('/new_position', Pose, queue_size=10)
-        self.gripper_open = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
+        self.pose_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
+        self.gripper_pub = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
         self.initial_config = init_pose
+        self.open_gripper = Bool(
+            data="true"
+        )
 
     def execute(self, userdata):
         rospy.loginfo('Executing state Initial')
-        self.gripper_open.publish(True)
-        self.new_position.publish(self.initial_config)
+        self.gripper_pub.publish(self.open_gripper)
+        self.pose_pub.publish(self.initial_config)
 
         return 'initialised'
 
@@ -59,10 +62,10 @@ class FindBlock(smach.State):
         self.positions = rospy.Subscriber('/block_positions', Pose, self.transform)
         
         self.block_found = False
-        self.transform = Pose()
+        self.pose = Pose()
 
-    def transform(self, tf):
-        self.transform = tf
+    def transform(self, new_pose: Pose):
+        self.pose = new_pose
         self.block_found = True
         
     
@@ -74,7 +77,7 @@ class FindBlock(smach.State):
 
         rospy.loginfo('Position found')
 
-        userdata.block_transform = self.transform
+        userdata.block_transform = self.pose
         self.block_found = False
         return 'position_found'
 
@@ -97,12 +100,15 @@ class MoveToBlock(smach.State):
 class GrabBlock(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['grabbed'])
-        self.gripper = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
+        self.pub = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
+        self.grab = Bool(
+            data="false"
+        )
 
 
     def execute(self, userdata):
         rospy.loginfo('Executing state GrabBlock')
-        self.gripper.publish(False)
+        self.pub.publish(self.grab)
         return 'grabbed'
 
 class MoveToIdentifyPosition(smach.State):
@@ -117,24 +123,31 @@ class MoveToIdentifyPosition(smach.State):
         self.new_position.publish(self.checking_pose)
         return 'in_identify_position'
 
+
 class IdentifyBlock(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['identified'])
-        self.colour_sub = rospy.Subscriber('/block_colour', String, queue_size=10)
-        self.colour = 0
+        smach.State.__init__(self, outcomes=['identified'], output_keys=['block_colour'])
+        self.colour_sub = rospy.Subscriber('/block_colour', String, self.callback)
+        self.colour = "none"
 
     def execute(self, userdata):
 
-        while (self.colour == 0) :
+        while (self.colour == "none") :
             rospy.loginfo('Waiting for colour')
 
         # Pass colour to next state
+        userdata.block_colour = self.colour
+        self.colour = "none"
         return 'identified'
+    
+    def callback(self, colour: String) :
+        self.colour = colour
+
 
 
 class MoveToDrop(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['drop_positioned'])
+        smach.State.__init__(self, outcomes=['drop_positioned'], input_keys=['block_colour'])
         self.sub = rospy.Publisher('/new_position', Pose, queue_size=10)
         self.zone_1_blocks = 0
         self.zone_2_blocks = 0
@@ -144,7 +157,8 @@ class MoveToDrop(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state MoveToDrop')
 
-        colour = "red"
+        colour = userdata.block_colour
+
         if colour == red_zone.colour :
             self.pose_pub.publish(red_zone.pose)
             self.zone_1_blocks += 1
@@ -165,18 +179,18 @@ class ReleaseBlock(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['released'])
         self.gripper = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
-
+        self.release = Bool(
+            data="true"
+        )
 
     def execute(self, userdata):
         rospy.loginfo('Executing state Release')
-        self.gripper.publish(True)
+        self.gripper.publish(self.release)
         return 'released'
 
 
-
-
 def main():
-    rospy.init_node('state_machine_main')
+    rospy.init_node('state_machine')
 
     # Create a SMACH state machine
     sm = smach.StateMachine(outcomes=['released'])
