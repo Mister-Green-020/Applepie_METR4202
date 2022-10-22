@@ -43,7 +43,7 @@ yellow_zone = Zone("yellow", zone_4)
 
 # State positions
 #Setup
-setup_point = Point(0, 0, L1+L2+L3+L4)
+setup_point = Point(0, 0, 10000)
 setup_pose = Pose(
     position=setup_point
 )
@@ -55,7 +55,7 @@ init_pose = Pose(
 )
 
 # Positions for the identification stage, needs to be high vertically and centred about camera axis
-id_point = Point(190, 0, 150)
+id_point = Point(190, 0, 300)
 id_pose = Pose(
     position=setup_point
 )
