@@ -74,7 +74,6 @@ class FindBlock(smach.State):
         rospy.loginfo('Executing state FindBlock')
         
         while not self.block_found :
-            rospy.sleep(2)
             pass
 
         rospy.loginfo('Position found')
@@ -144,7 +143,6 @@ class IdentifyBlock(smach.State):
     def execute(self, userdata):
 
         while (self.colour == "'none'") :
-            rospy.loginfo('Waiting for colour')
             pass
 
         # Pass colour to next state
@@ -170,7 +168,7 @@ class MoveToDrop(smach.State):
         rospy.loginfo('Executing state MoveToDrop')
 
         colour = userdata.block_colour
-
+        rospy.loginfo("Colour assigned")
         if colour == red_zone.colour :
             self.pose_pub.publish(red_zone.pose)
             self.zone_1_blocks += 1
@@ -183,6 +181,8 @@ class MoveToDrop(smach.State):
         elif colour == yellow_zone.colour :
             self.pose_pub.publish(yellow_zone.pose)
             self.zone_4_blocks += 1
+
+        rospy.loginfo(colour)
         rospy.sleep(2)
         return 'drop_positioned'
 
