@@ -205,7 +205,7 @@ def main():
     rospy.init_node('state_machine')
 
     # Create a SMACH state machine
-    sm = smach.StateMachine()
+    sm = smach.StateMachine(outcomes=[''])
     # sm = smach.StateMachine(outcomes=['released'])
 
     with sm:
