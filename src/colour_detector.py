@@ -56,14 +56,14 @@ class ColourDetector() :
         self.pub.publish(msg)
     
     def colour_identifier(self, rgba : ColorRGBA) -> String :
-        if (rgba.r > 220 and rgba.r > rgba.b and rgba.r > 150) :
+        if (rgba.r > 200 and rgba.g > 200) :
+            msg = "'yellow'"
+        elif (rgba.r > 220) :
             msg = "'red'"
+        elif (rgba.b > rgba.r and rgba.g > rgba.r and rgba.g > 160 and rgba.b > 160) :
+            msg = "'blue'"
         elif (rgba.g > rgba.r and rgba.g > rgba.b and rgba.g > 150) :
             msg = "'green'"
-        elif (rgba.b > rgba.r and rgba.g > rgba.r and rgba.g > 150 and rgba.b > 150) :
-            msg = "'blue'"
-        elif (rgba.r > 200 and rgba.g > 200) :
-            msg = "'yellow'"
         else :
             msg = "'none'"
         
