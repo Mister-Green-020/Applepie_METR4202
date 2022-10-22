@@ -23,7 +23,7 @@ class Setup(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state setup')
         show_rgb = Bool(
-            data="true"
+            data=True
         )
 
         self.camera_pub(show_rgb)
@@ -42,7 +42,7 @@ class InitialState(smach.State):
         self.gripper_pub = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
         self.initial_config = init_pose
         self.open_gripper = Bool(
-            data="true"
+            data=True
         )
 
     def execute(self, userdata):
@@ -104,7 +104,7 @@ class GrabBlock(smach.State):
         smach.State.__init__(self, outcomes=['grabbed'])
         self.pub = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
         self.grab = Bool(
-            data="false"
+            data=False
         )
 
 
@@ -185,7 +185,7 @@ class ReleaseBlock(smach.State):
         smach.State.__init__(self, outcomes=['released'])
         self.gripper = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
         self.release = Bool(
-            data="true"
+            data=True
         )
 
     def execute(self):
