@@ -195,7 +195,7 @@ class ReleaseBlock(smach.State):
             data=True
         )
 
-    def execute(self):
+    def execute(self userdata):
         rospy.loginfo('Executing state Release')
         self.gripper.publish(self.release)
         return 'released'
