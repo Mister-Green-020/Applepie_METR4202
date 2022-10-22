@@ -4,9 +4,16 @@
     <include file="$(find dynamixel_interface)/launch/dynamixel_interface_controller.launch"/>
 
     <!-- Start Inverse Kinematics Node (inverse kinematics and collision detection)-->
-    <!-- <node pkg="applepie_metr4202" type="ik_node.py" name="ik_node"/> -->
+    <!-- Is this the Joint_Publisher node?-->> 
+    <node pkg="applepie_metr4202" type="ik_node.py" name="ik_node" output="screen"/>
 
     <!-- Start Gripper Node -->
-    <!-- <node pkg="applepie_metr4202" type="gripper.py" name="gripper" -->
+    <node pkg="applepie_metr4202" type="gripper.py" name="gripper" output="screen"/>
 
-<launch> 
+    <!-- State Machine Node-->>
+    <node pkg="applepie_metr4202" type="state_machine.py" name="state_machine" output="screen"/>
+
+    <!-- Block Planning Node-->>
+    <node pkg="applepie_metr4202" type="robot_vision.py" name="block_planning" output="screen"/>
+
+<launch>

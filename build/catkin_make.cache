@@ -1,0 +1,2 @@
+
+-DCATKIN_DEVEL_PREFIX=/home/anappleaday/catkin_ws/src/Applepie_METR4202/devel -DCMAKE_INSTALL_PREFIX=/home/anappleaday/catkin_ws/src/Applepie_METR4202/install -G Unix Makefiles
