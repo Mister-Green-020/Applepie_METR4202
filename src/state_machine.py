@@ -133,7 +133,7 @@ class IdentifyBlock(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['identified'], output_keys=['block_colour'])
         self.colour_sub = rospy.Subscriber('/block_colour', String, self.callback)
-        self.colour = "none"
+        self.colour = 'none'
 
     def execute(self, userdata):
 
