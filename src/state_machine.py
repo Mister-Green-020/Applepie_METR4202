@@ -158,7 +158,7 @@ class IdentifyBlock(smach.State):
 class MoveToDrop(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['drop_positioned'], input_keys=['block_colour'])
-        self.sub = rospy.Publisher('/new_position', Pose, queue_size=10)
+        self.pose_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
         self.zone_1_blocks = 0
         self.zone_2_blocks = 0
         self.zone_3_blocks = 0
