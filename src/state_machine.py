@@ -26,7 +26,7 @@ class Setup(smach.State):
             data=True
         )
 
-        self.camera_pub(show_rgb)
+        self.camera_pub.publish(show_rgb)
         self.position_pub.publish(self.setup_state)
 
         return 'setup'
@@ -118,7 +118,7 @@ class MoveToIdentifyPosition(smach.State):
     State to move the block to a position in which the colour can be easily determined
     """
     def __init__(self):
-        smach.State.__init__(self, outcomes=['identified'])
+        smach.State.__init__(self, outcomes=['in_identify_position'])
         self.checking_pose = id_pose
         self.pos_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
 
@@ -219,13 +219,13 @@ def main():
         smach.StateMachine.add('MoveToIdentifyPosition', MoveToIdentifyPosition(), 
                         transitions={'in_identify_position':'IdentifyBlock'})
 
-        smach.StateMachine.add('IdentifyBlock', MoveToIdentifyPosition(), 
+        smach.StateMachine.add('IdentifyBlock', IdentifyBlock(), 
                         transitions={'identified':'MoveToDrop'})
 
-        smach.StateMachine.add('MoveToDrop', ReleaseBlock(), 
+        smach.StateMachine.add('MoveToDrop', MoveToDrop(), 
                         transitions={'drop_positioned':'ReleaseBlock'})
 
-        smach.StateMachine.add('ReleaseBlock', InitialState(), 
+        smach.StateMachine.add('ReleaseBlock', ReleaseBlock(), 
                         transitions={'released':'InitialState'})
         
     # Execute SMACH plan
