@@ -28,6 +28,7 @@ class Setup(smach.State):
 
         self.camera_pub.publish(show_rgb)
         self.position_pub.publish(self.setup_state)
+        rospy.sleep(1000)
 
         return 'setup'
         
@@ -49,6 +50,7 @@ class InitialState(smach.State):
         rospy.loginfo('Executing state Initial')
         self.gripper_pub.publish(self.open_gripper)
         self.pose_pub.publish(self.initial_config)
+        rospy.sleep(1000)
 
         return 'initialised'
 
@@ -72,6 +74,7 @@ class FindBlock(smach.State):
         rospy.loginfo('Executing state FindBlock')
         
         while not self.block_found :
+            rospy.sleep(10)
             pass
 
         rospy.loginfo('Position found')
@@ -93,6 +96,7 @@ class MoveToBlock(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state Move')
         self.new_position.publish(userdata.block_transform)
+        rospy.sleep(500)
         return 'positioned'
         
 
@@ -111,6 +115,7 @@ class GrabBlock(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state GrabBlock')
         self.pub.publish(self.grab)
+        rospy.sleep(100)
         return 'grabbed'
 
 class MoveToIdentifyPosition(smach.State):
@@ -126,6 +131,7 @@ class MoveToIdentifyPosition(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing identify position')
         self.new_position.publish(self.checking_pose)
+        rospy.sleep(1000)
         return 'in_identify_position'
 
 
@@ -176,7 +182,7 @@ class MoveToDrop(smach.State):
         elif colour == yellow_zone.colour :
             self.pose_pub.publish(yellow_zone.pose)
             self.zone_4_blocks += 1
-        
+        rospy.sleep(1000)
         return 'drop_positioned'
 
 
@@ -190,7 +196,7 @@ class ReleaseBlock(smach.State):
 
     def execute(self):
         rospy.loginfo('Executing state Release')
-        self.gripper.publish(self.release)
+        self.gripper.publish(self.release)rospy.sleep(100)
         return 'released'
 
 
