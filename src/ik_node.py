@@ -41,7 +41,8 @@ class InverseKinematics:
         msg = JointState(
             header = Header(stamp=rospy.Time.now()),
             name = ['joint_1', 'joint_2', 'joint_3', 'joint_4'],
-            position = [theta_1, theta_2, theta_3, theta_4]
+            position = [theta_1, theta_2, theta_3, theta_4],
+            velocity = [1.5, 1.5, 1.5, 1.5]
         )
 
         # Published desired joint state message
