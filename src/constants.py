@@ -57,7 +57,7 @@ init_pose = Pose(
 # Positions for the identification stage, needs to be high vertically and centred about camera axis
 id_point = Point(190, 0, 150)
 id_pose = Pose(
-    position=setup_point
+    position=id_point
 )
 
 
