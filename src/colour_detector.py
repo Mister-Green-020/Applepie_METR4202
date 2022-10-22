@@ -51,11 +51,11 @@ class ColourDetector() :
         self.pub.publish(msg)
     
     def colour_identifier(self, rgba : ColorRGBA) -> String :
-        if (rgba.r > rgba.g and rgba.r > rgba.b) :
+        if (rgba.r > rgba.g and rgba.r > rgba.b and rgba.r > 150) :
             msg = "red"
-        elif (rgba.g > rgba.r and rgba.g > rgba.b) :
+        elif (rgba.g > rgba.r and rgba.g > rgba.b and rgba.g > 150) :
             msg = "green"
-        elif (rgba.b > rgba.r and rgba.b > rgba.g) :
+        elif (rgba.b > rgba.r and rgba.b > rgba.g and rgba.b > 150) :
             msg = "blue"
         else :
             msg = "yellow"
