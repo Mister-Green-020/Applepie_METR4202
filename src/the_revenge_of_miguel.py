@@ -27,12 +27,17 @@ class CameraViewer:
     except CvBridgeError as e:
       print(e)
 
-    (rows,cols,channels) = cv_image.shape
-    if cols > 60 and rows > 60 :
-      cv2.circle(cv_image, (int(cam_h/2),int(cam_w/2)), 30, 255)
+    cv2.circle(cv_image, (int(cam_h/2),int(cam_w/2)), 30, 255)
 
     cv2.imshow("Image window", cv_image)
     cv2.waitKey(3)
+
+    bgr = img[img.shape[0] // 2, img.shape[1] // 2, :]
+    color = ColorRGBA()
+    color.r = bgr[2]
+    color.g = bgr[1]
+    color.b = bgr[0]
+    self.color_pub.publish(color)
 
 
 
