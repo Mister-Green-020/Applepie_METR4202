@@ -32,7 +32,7 @@ class CameraViewer:
     cv2.imshow("Image window", cv_image)
     cv2.waitKey(3)
 
-    bgr = img[img.shape[0] // 2, img.shape[1] // 2, :]
+    bgr = cv_image[cv_image.shape[0] // 2, cv_image.shape[1] // 2, :]
     color = ColorRGBA()
     color.r = bgr[2]
     color.g = bgr[1]
