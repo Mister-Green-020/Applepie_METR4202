@@ -175,7 +175,7 @@ class MoveToDrop(smach.State):
         elif colour == blue_zone.colour :
             self.pose_pub.publish(blue_zone.pose)
             self.zone_2_blocks += 1
-        if colour == green_zone.colour :
+        elif colour == green_zone.colour :
             self.pose_pub.publish(green_zone.pose)
             self.zone_3_blocks += 1
         elif colour == yellow_zone.colour :

@@ -35,10 +35,10 @@ zone_2 = Point(-150, 50, 0)
 zone_3 = Point(-150, 50, 0)
 zone_4 = Point(-150, -50, 0)
 
-red_zone = Zone("red", zone_1)
-blue_zone = Zone("blue", zone_2)
-green_zone = Zone("green", zone_3)
-yellow_zone = Zone("yellow", zone_4)
+red_zone = Zone("'red'", zone_1)
+blue_zone = Zone("'blue'", zone_2)
+green_zone = Zone("'green'", zone_3)
+yellow_zone = Zone("'yellow'", zone_4)
 
 
 # State positions
