@@ -18,6 +18,11 @@ camera_z = 400
 cam_h = 640
 cam_w = 512
 
+# Out of range values for collission checking and other vision params
+out_of_reach_x = 200
+block_offset = 16
+
+
 # Object class
 class Zone:
     def __init__(self, colour, point: Point) :
@@ -47,7 +52,7 @@ setup_pose = Pose(
 # Positions for the starting stage, need to be close enough for standard grabbing range
 init_point = Point(100, 0, 100)
 init_pose = Pose(
-    position=setup_point
+    position=init_point
 )
 
 # Positions for the identification stage, needs to be high vertically and centred about camera axis

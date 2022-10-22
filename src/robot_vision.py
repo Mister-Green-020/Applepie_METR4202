@@ -38,6 +38,7 @@ class RobotVision:
         # Use FiducialTransforms http://docs.ros.org/en/kinetic/api/fiducial_msgs/html/msg/FiducialTransform.html
         # Many http://docs.ros.org/en/kinetic/api/fiducial_msgs/html/msg/FiducialTransformArray.html
         self.sub = rospy.Subscriber('/fiducial_transforms', FiducialTransformArray, self.image_received)
+        self.previous_fiducials = 0
 
 
 
@@ -52,10 +53,10 @@ class RobotVision:
         available_transforms = []
 
         for transform in fiducial_transforms :
-            # Add a collision checker here
-            available_transforms.append(transform)
+            if self.collision_checking(transform) :
+                available_transforms.append(transform)
 
-        # If there are transforms available, select the first for now
+        # If there are transforms available, select the one
         if (len(available_transforms) > 0) :
             selected = available_transforms[0]
             pose = Pose (
@@ -65,7 +66,7 @@ class RobotVision:
             self.pub.publish(pose)
 
     
-    def collision_checking(self, position, all_positions) -> bool :
+    def collision_checking(self, fid_t: FiducialTransform) -> bool :
         """
         Checks if given block is unable to be grabbed based on predefined rules.
                 Parameters:
@@ -75,14 +76,15 @@ class RobotVision:
                 Returns: 
                     bool: True if no collisions, False is can collide
         """
-
-
-        if (1) :
-            return True
+        if (fid_t.transform.translation.x > out_of_reach_x) :
+            return False
         
-        return False
+        return True
+        
     def camera_to_base(self, fid_t: FiducialTransform) -> Point:
-        '''Take camera traslation and rotation and return base rotation.postion '''
+        """
+        Determine the position vector of the block relative to the robot base frame from the camera frame
+        """
         p1 = np.array([fid_t.transform.translation.x*1000, fid_t.transform.translation.y*1000, fid_t.transform.translation.z*1000])
         # R1 = np.array([[fid_t.rotation.x,0,0],[0,fid_t.rotation.y,0],[0,0,fid_t.rotation.z]])
         R1 = np.array([[1,0,0],[0,1,0],[0,0,1]])
@@ -92,11 +94,33 @@ class RobotVision:
 
         R2, p2 = mr.TransToRp(t_2)
         position = Point(
-            x = p2[0]+17,
-            y = p2[1]+17,
+            x = p2[0]+block_offset,
+            y = p2[1]+block_offset,
             z = p2[2]
         )
         return position
+    
+    def is_moving(self, fid_t_arr) -> bool :
+        fid_check = None
+        prev_fid = None
+        for fid_t in fid_t_arr :
+            if (fid_check != None) :
+                break
+            for prev_fid_t in self.previous_fiducials :
+                if fid_t.fiducial_id == prev_fid_t.fiducial_id :
+                    fid_check = fid_t
+                    prev_fid = prev_fid_t
+                    break
+        # Redundancy in case where data is incorrect
+        if fid_check == None :
+            return True
+
+        if ((abs(fid_check.transform.translation.x) - abs(prev_fid.transform.translation.x))>0.5) :
+            return True
+        if ((abs(fid_check.transform.translation.y) - abs(prev_fid.transform.translation.y))>0.5) :
+            return True
+        return False
+        
 
 def main(): 
     rospy.init_node('robot_vision', anonymous=True)

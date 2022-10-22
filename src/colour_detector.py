@@ -30,10 +30,10 @@ class ColourDetector() :
         """
 
         # Given an image, we index the middle pixels
-        img_subset = img.data[3 * self.camera_height * self.camera_width / 2 : 3 * self.camera_height * self.camera_width/2 + 3]
+        img.data = img.data[3 * self.camera_height * self.camera_width / 2 : 3 * self.camera_height * self.camera_width/2 + 2]
 
         try:
-            subset_rgb = self.bridge.imgmsg_to_cv2(img_subset, "bgr8")
+            subset_rgb = self.bridge.imgmsg_to_cv2(img, "bgr8")
         except CvBridgeError as e:
             print(e)
 
