@@ -8,6 +8,7 @@ from std_msgs.msg import ColorRGBA, String
 from cv_bridge import CvBridge, CvBridgeError
 from constants import *
 
+SERIAL = serial
 img = None
 
 class CameraViewer:
@@ -23,8 +24,15 @@ class CameraViewer:
   def callback(self, data):
     global img
 
+    # rospy.loginfo(len(data.data))
+    data.data = data.data[int(3 * cam_h * cam_w / 2) : int(3 * cam_h * cam_w/2 + (3*20))]
+    data.height = 20
+    data.width = 1
 
-    data.data = data.data[3 * self.camera_height * self.camera_width / 2 : 3 * self.camera_height * self.camera_width/2 + 2]
+    data.step = 3
+    print(len(data.data))
+    # rospy.loginfo(f"{data.height}")
+    # rospy.loginfo(f"{data.width}")
     self.test_pub.publish(data)
     
     try:
