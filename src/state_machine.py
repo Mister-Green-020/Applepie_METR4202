@@ -139,12 +139,13 @@ class IdentifyBlock(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['identified'], output_keys=['block_colour'])
         self.colour_sub = rospy.Subscriber('/block_colour', String, self.callback)
-        self.colour = 'none'
+        self.colour = "'none'"
 
     def execute(self, userdata):
 
-        while (self.colour == "none") :
+        while (self.colour == "'none'") :
             rospy.loginfo('Waiting for colour')
+            pass
 
         # Pass colour to next state
         userdata.block_colour = self.colour
@@ -197,7 +198,6 @@ class ReleaseBlock(smach.State):
     def execute(self):
         rospy.loginfo('Executing state Release')
         self.gripper.publish(self.release)
-        rospy.sleep(2)
         return 'released'
 
 
@@ -205,7 +205,8 @@ def main():
     rospy.init_node('state_machine')
 
     # Create a SMACH state machine
-    sm = smach.StateMachine(outcomes=['released'])
+    sm = smach.StateMachine()
+    # sm = smach.StateMachine(outcomes=['released'])
 
     with sm:
         smach.StateMachine.add('Setup', Setup(), 
