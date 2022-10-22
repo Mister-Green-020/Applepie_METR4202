@@ -130,7 +130,7 @@ class MoveToIdentifyPosition(smach.State):
 
     def execute(self, userdata):
         rospy.loginfo('Executing identify position')
-        self.new_position.publish(self.checking_pose)
+        self.pos_pub.publish(self.checking_pose)
         rospy.sleep(1)
         return 'in_identify_position'
 
