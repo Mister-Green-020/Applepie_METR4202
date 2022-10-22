@@ -30,7 +30,7 @@ class ColourDetector() :
         """
 
         # Given an image, we index the middle pixels
-        img_subset = img.data[3 * self.camera_height * self.camera_width / 2 : 3 * self.camera_height * self.camera_width/2 + 3]
+        img_subset = img.data[3 * self.camera_height * self.camera_width / 2 : 3 * self.camera_height * self.camera_width/2 + 2]
 
         try:
             subset_rgb = self.bridge.imgmsg_to_cv2(img_subset, "bgr8")

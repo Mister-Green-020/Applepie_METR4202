@@ -18,6 +18,11 @@ camera_z = 400
 cam_h = 640
 cam_w = 512
 
+# Out of range values for collission checking and other vision params
+out_of_reach_x = 200
+block_offset = 16
+
+
 # Object class
 class Zone:
     def __init__(self, colour, point: Point) :
