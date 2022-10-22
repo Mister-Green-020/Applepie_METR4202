@@ -52,7 +52,7 @@ setup_pose = Pose(
 # Positions for the starting stage, need to be close enough for standard grabbing range
 init_point = Point(100, 0, 100)
 init_pose = Pose(
-    position=setup_point
+    position=init_point
 )
 
 # Positions for the identification stage, needs to be high vertically and centred about camera axis

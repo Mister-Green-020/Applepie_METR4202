@@ -6,7 +6,7 @@ import numpy as np
 from sensor_msgs.msg import Image
 from std_msgs.msg import ColorRGBA, String
 from cv_bridge import CvBridge, CvBridgeError
-from constants import serial as SERIAL
+from constants import *
 
 img = None
 
@@ -18,14 +18,21 @@ class CameraViewer:
     self.image_sub = rospy.Subscriber("/fiducial_images", Image, self.callback)
     # self.image_sub = rospy.Subscriber(f"/ximea_ros/ximea_{self.serial}/image_raw", Image, self.callback)
     self.color_pub = rospy.Publisher("/test_color", ColorRGBA, queue_size=10)
-    self.test_pub = rospy.Publisher("/data_length", String, queue_size=10)
+    self.test_pub = rospy.Publisher("/cd_test", Image, queue_size=10)
 
   def callback(self, data):
     global img
+
+
+    data.data = data.data[3 * self.camera_height * self.camera_width / 2 : 3 * self.camera_height * self.camera_width/2 + 2]
+    self.test_pub.publish(data)
+    
     try:
       img = self.bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
       print(e)
+    
+
 
     bgr = img[img.shape[0] // 2, img.shape[1] // 2, :]
     color = ColorRGBA()
@@ -33,10 +40,10 @@ class CameraViewer:
     color.g = bgr[1]
     color.b = bgr[0]
     viewer.color_pub.publish(color)
-    msg = String(
-      data=f'{len(data.data)}'
-    )
-    self.test_pub.publish(msg)
+    # msg = String(
+    #   data=f'{len(data.data)}'
+    # )
+    # self.test_pub.publish(msg)
 
 
 
