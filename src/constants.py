@@ -22,7 +22,6 @@ cam_w = 512
 out_of_reach_x = 200
 block_offset = 16
 
-
 # Object class
 class Zone:
     def __init__(self, colour, point: Point) :
