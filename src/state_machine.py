@@ -11,7 +11,7 @@ from constants import *
 
 class Setup(smach.State):
     """
-    Setup state aimed at checking motors work and initialising camera detection
+    Setup state occurs once on launch, to verify motors function and ensure RGB colour is on.
     """
     def __init__(self):
         smach.State.__init__(self, outcomes=['setup'])
@@ -22,8 +22,9 @@ class Setup(smach.State):
 
     def execute(self, userdata):
         rospy.loginfo('Executing state setup')
-        show_rgb = Bool()
-        show_rgb.data = True
+        show_rgb = Bool(
+            data="true"
+        )
 
         self.camera_pub(show_rgb)
         self.position_pub.publish(self.setup_state)
@@ -33,8 +34,7 @@ class Setup(smach.State):
 
 class InitialState(smach.State):
     """
-    Initial state sets the arm to a specified initial configuration.
-    Publishes to the gripper and a new position.
+    Initial state sets the waiting position for the arm to grab blocks
     """
     def __init__(self):
         smach.State.__init__(self, outcomes=['initialised'])
@@ -55,8 +55,7 @@ class InitialState(smach.State):
 class FindBlock(smach.State):
     def __init__(self):
         """
-        While loop runs until it receives message of a block position, including block type
-        http://wiki.ros.org/smach/Tutorials/User%20Data
+        While loop runs until it has located a block position and passes the transform onto the next state
         """
         smach.State.__init__(self, outcomes=['position_found'], output_keys=['block_transform'])
         self.positions = rospy.Subscriber('/block_positions', Pose, self.transform)
@@ -84,7 +83,7 @@ class FindBlock(smach.State):
 
 class MoveToBlock(smach.State):
     """
-    Camera provides next location of block, this will subscribe to the value and publish it to joints
+    Moves the robot arm to the desired location from the waiting stage via userdata
     """
     def __init__(self):
         smach.State.__init__(self, outcomes=['positioned'], input_keys=['block_transform'])
@@ -98,6 +97,9 @@ class MoveToBlock(smach.State):
         
 
 class GrabBlock(smach.State):
+    """
+    Command state to close the gripper
+    """
     def __init__(self):
         smach.State.__init__(self, outcomes=['grabbed'])
         self.pub = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
@@ -112,6 +114,9 @@ class GrabBlock(smach.State):
         return 'grabbed'
 
 class MoveToIdentifyPosition(smach.State):
+    """
+    State to move the block to a position in which the colour can be easily determined
+    """
     def __init__(self):
         smach.State.__init__(self, outcomes=['identified'])
         self.checking_pose = id_pose
@@ -141,7 +146,7 @@ class IdentifyBlock(smach.State):
         return 'identified'
     
     def callback(self, colour: String) :
-        self.colour = colour
+        self.colour = colour.data
 
 
 
@@ -183,7 +188,7 @@ class ReleaseBlock(smach.State):
             data="true"
         )
 
-    def execute(self, userdata):
+    def execute(self):
         rospy.loginfo('Executing state Release')
         self.gripper.publish(self.release)
         return 'released'
@@ -203,12 +208,10 @@ def main():
                         transitions={'initialised' : 'FindBlock'})
 
         smach.StateMachine.add('FindBlock', FindBlock(), 
-                        transitions={'position_found':'MoveToBlock'},
-                        remapping={'block_transform':'sm_block_transform'})
+                        transitions={'position_found':'MoveToBlock'})
 
         smach.StateMachine.add('MoveToBlock', MoveToBlock(), 
-                        transitions={'positioned':'GrabBlock'},
-                        remapping={'block_transform':'sm_block_transform'})
+                        transitions={'positioned':'GrabBlock'})
 
         smach.StateMachine.add('GrabBlock', GrabBlock(), 
                         transitions={'grabbed':'MoveToIdentifyPosition'})
