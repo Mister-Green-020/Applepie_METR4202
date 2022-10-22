@@ -47,7 +47,7 @@ class ColourDetector() :
             g = bgr[1],
             b = bgr[0]
         )
-        self.raw_colour_pub(colour)
+        self.raw_colour_pub.publish(colour)
 
         msg = String(
             data = self.colour_identifier(colour)
