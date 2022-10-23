@@ -182,6 +182,32 @@ class GoToThrowPos(smach.State):
         userdata.colour = colour
         return 'in_throw_pos'
 
+class MoveToSafetyDrop(smach.State):
+    """
+    State to move the block to a position in which the colour can be easily determined
+    """
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['can_safely_drop'])
+        self.safety_pose = safety_pose
+        self.grip_pub = rospy.Publisher('/desired_gripper_state', Bool, queue_size=10)
+        self.pos_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
+        self.release = Bool(
+            data=True
+        )
+
+
+    def execute(self, userdata):
+
+        """
+        Robot moves the block to specified checking position, holding for 1 second to allow colour to be checked
+        """
+
+        rospy.loginfo('Executing identify position')
+        self.pos_pub.publish(self.safety_pose)
+        rospy.sleep(sleep_s)
+        self.grip_pub.publish(self.release)
+        return 'can_safely_drop'
+
 
 
 class ThrowBlock(smach.State):
@@ -239,7 +265,10 @@ def main():
                         transitions={'in_identify_position':'IdentifyBlock'})
 
         smach.StateMachine.add('IdentifyBlock', IdentifyBlock(), 
-                        transitions={'identified':'GoToThrowPos', 'no_block' : 'InitialState'})
+                        transitions={'identified':'GoToThrowPos', 'no_block' : 'SafetyDrop'})
+        
+        smach.StateMachine.add('SafetyDrop', SafetyDrop(), 
+                        transitions={'can_safely_drop':'ReleaseBlock'})
 
         smach.StateMachine.add('GoToThrowPos', GoToThrowPos(), 
                         transitions={'in_throw_pos' : 'ThrowBlock'})

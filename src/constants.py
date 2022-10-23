@@ -64,6 +64,12 @@ id_pose = Pose(
     position=id_point
 )
 
+# Defines the safe release location
+safety_point = Point(145, 0, 50)
+safety_pose = Pose(
+    position=safety_point
+)
+
 # Sleep
 sleep_s = 1
 wait_time = 3.0
