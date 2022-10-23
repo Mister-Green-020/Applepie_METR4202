@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 
+from math import sqrt
 import rospy
 from std_msgs.msg import Header, String
 from sensor_msgs.msg import Image
@@ -63,7 +64,7 @@ class RobotVision:
                 available_poses.append(new_pose)
         
         # If there are transforms available, select the one
-        if (len(available_poses) > 0 and not self.is_moving(fiducial_transforms)) :
+        if (not self.is_moving(fiducial_transforms) and len(available_poses) > 0) :
             pose = available_poses[0]
             self.pub.publish(pose)
 
@@ -93,6 +94,7 @@ class RobotVision:
         # R1 = np.array([[fid_t.rotation.x,0,0],[0,fid_t.rotation.y,0],[0,0,fid_t.rotation.z]])
         R1 = np.array([[1,0,0],[0,1,0],[0,0,1]])
 
+
         t_1 = mr.RpToTrans(R1, p1)
         t_2 = self.T_rc @ t_1
 
@@ -120,13 +122,21 @@ class RobotVision:
                     break
         # Redundancy in case where data is incorrect
         if fid_check == None :
+            rospy.loginfo("Not found")
             return True
+        # rospy.loginfo(fid_check.transform.translation.x*1000)
+        # rospy.loginfo(prev_fid.transform.translation.x*1000)
 
-        if ((abs(fid_check.transform.translation.x*1000) - abs(prev_fid.transform.translation.x*1000))>1) :
+        # if ((abs(fid_check.transform.translation.x*1000 - prev_fid.transform.translation.x*1000))>1) :
+        #     rospy.loginfo("moving")
+        #     return True
+        # if ((abs(fid_check.transform.translation.y*1000) - abs(prev_fid.transform.translation.y*1000))>1) :
+        #     return True
+        distance = sqrt((fid_check.transform.translation.x*1000 - prev_fid.transform.translation.x*1000)**2 + \
+            (fid_check.transform.translation.y*1000 - prev_fid.transform.translation.y*1000)**2)
+        # rospy.loginfo(distance)
+        if distance > d_err :
             return True
-        if ((abs(fid_check.transform.translation.y*1000) - abs(prev_fid.transform.translation.y*1000))>1) :
-            return True
-
         return False
         
 

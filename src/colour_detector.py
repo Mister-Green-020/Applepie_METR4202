@@ -62,13 +62,13 @@ class ColourDetector() :
         """
         
         """
-        if (rgba.r > 200 and rgba.g > 200) :
+        if (rgba.r > 200 and rgba.g > 200 and rgba.b < 100) :
             msg = "'yellow'"
         elif (rgba.r > 220) :
             msg = "'red'"
-        elif (rgba.b > rgba.r and rgba.g > rgba.r and rgba.g > 160 and rgba.b > 160) :
+        elif (rgba.b > rgba.r and rgba.g > rgba.r and rgba.g > 130 and rgba.b > 130) :
             msg = "'blue'"
-        elif (rgba.g > rgba.r and rgba.g > rgba.b and rgba.g > 150) :
+        elif (rgba.g > rgba.r and rgba.g > rgba.b and rgba.g > 180) :
             msg = "'green'"
         else :
             msg = "'none'"
