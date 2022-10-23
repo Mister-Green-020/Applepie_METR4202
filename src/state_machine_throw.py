@@ -185,7 +185,7 @@ class ThrowBlock(smach.State):
 
         rospy.sleep(0.2)
         self.gripper.publish(self.release)
-        return 'bye_block_block'
+        return 'bye_bye_block'
 
 
 
