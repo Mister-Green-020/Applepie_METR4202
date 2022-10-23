@@ -153,17 +153,41 @@ class IdentifyBlock(smach.State):
 
         # Pass colour to next state
         userdata.block_colour = self.colour
-        self.colour = "none"
+        self.colour = "'none'"
         return 'identified'
     
     def callback(self, colour: String) :
         self.colour = colour.data
 
 
+class GoToThrowPos(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['in_throw_pos'], input_keys=['block_colour'], output_keys=['_block_colour'])
+        self.pose_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
+
+    def execute(self, userdata):
+        rospy.loginfo('Executing state MoveToDrop')
+        colour = userdata.block_colour
+        rospy.loginfo(colour)
+        if colour == red_zone_throw.colour :
+            self.pose_pub.publish(red_zone_throw.pose)
+        elif colour == blue_zone_throw.colour :
+            self.pose_pub.publish(blue_zone_throw.pose)
+        elif colour == green_zone_throw.colour :
+            self.pose_pub.publish(green_zone_throw.pose)
+        elif colour == yellow_zone_throw.colour :
+            self.pose_pub.publish(yellow_zone_throw.pose)
+
+        rospy.sleep(throw_wait)
+        self.gripper.publish(self.release)
+        userdata._block_colour = colour
+        return 'in_throw_pos'
+
+
 
 class ThrowBlock(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['bye_bye_block'], input_keys=['block_colour'])
+        smach.State.__init__(self, outcomes=['bye_bye_block'], input_keys=['_block_colour'])
         self.pose_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
         self.gripper = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
         self.release = Bool(
@@ -183,7 +207,7 @@ class ThrowBlock(smach.State):
         elif colour == yellow_zone.colour :
             self.pose_pub.publish(yellow_zone.pose)
 
-        rospy.sleep(0.2)
+        rospy.sleep(throw_release)
         self.gripper.publish(self.release)
         return 'bye_bye_block'
 
@@ -216,7 +240,10 @@ def main():
                         transitions={'in_identify_position':'IdentifyBlock'})
 
         smach.StateMachine.add('IdentifyBlock', IdentifyBlock(), 
-                        transitions={'identified':'ThrowBlock', 'no_block' : 'InitialState'})
+                        transitions={'identified':'GoToThrowPos', 'no_block' : 'InitialState'})
+
+        smach.StateMachine.add('GoToThrowPos', GoToThrowPos(), 
+                        transitions={'in_throw_pos' : 'ThrowBlock'})
 
         smach.StateMachine.add('ThrowBlock', ThrowBlock(), 
                         transitions={'bye_bye_block' : 'InitialState'})

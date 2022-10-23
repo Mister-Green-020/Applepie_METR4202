@@ -153,7 +153,7 @@ class IdentifyBlock(smach.State):
 
         # Pass colour to next state
         userdata.block_colour = self.colour
-        self.colour = "none"
+        self.colour = "'none'"
         return 'identified'
     
     def callback(self, colour: String) :
