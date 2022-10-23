@@ -10,10 +10,11 @@ import numpy as np
 from constants import *
 
 class Setup(smach.State):
-    """
-    Setup state occurs once on launch, to verify motors function and ensure RGB colour is on.
-    """
+
     def __init__(self):
+        """
+        Setup state occurs once on launch, to verify motors function and ensure RGB colour is on.
+        """        
         smach.State.__init__(self, outcomes=['setup'])
         self.position_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
         self.camera_pub = rospy.Publisher('/ximea_ros/show_rgb', Bool, queue_size=10)
@@ -21,6 +22,7 @@ class Setup(smach.State):
 
 
     def execute(self, userdata):
+
         rospy.loginfo('Executing state setup')
         show_rgb = Bool(
             data=True
@@ -47,6 +49,11 @@ class InitialState(smach.State):
         )
 
     def execute(self, userdata):
+
+        """
+        Sets robot to initial state
+        """
+
         rospy.loginfo('Executing state Initial')
         self.gripper_pub.publish(self.open_gripper)
         self.pose_pub.publish(self.initial_config)
@@ -56,9 +63,11 @@ class InitialState(smach.State):
 
 class FindBlock(smach.State):
     def __init__(self):
+
         """
-        While loop runs until it has located a block position and passes the transform onto the next state
+
         """
+       
         smach.State.__init__(self, outcomes=['position_found'], output_keys=['block_transform'])
         self.positions = rospy.Subscriber('/block_positions', Pose, self.transform)
         
@@ -66,11 +75,21 @@ class FindBlock(smach.State):
         self.pose = Pose()
 
     def transform(self, new_pose: Pose):
+
+        """
+        Identifies the new pose if a block is found
+        """
+
         self.pose = new_pose
         self.block_found = True
         
     
     def execute(self, userdata):
+
+        """
+        While loop runs until it has located a block position and passes the transform onto the next state
+        """
+
         rospy.loginfo('Executing state FindBlock')
         rospy.sleep(1)
         while not self.block_found :
@@ -93,6 +112,9 @@ class MoveToBlock(smach.State):
 
 
     def execute(self, userdata):
+        """
+        Robot arm moves to new position from transform information
+        """
         rospy.loginfo('Executing state Move')
         self.new_position.publish(userdata.block_transform)
         rospy.sleep(sleep_s)
@@ -112,6 +134,11 @@ class GrabBlock(smach.State):
 
 
     def execute(self, userdata):
+
+        """
+        Gripper closes and grabs the block
+        """
+
         rospy.loginfo('Executing state GrabBlock')
         self.pub.publish(self.grab)
         # rospy.sleep(sleep_s)
@@ -128,6 +155,11 @@ class MoveToIdentifyPosition(smach.State):
 
 
     def execute(self, userdata):
+
+        """
+        Robot moves the block to specified checking position, holding for 1 second to allow colour to be checked
+        """
+
         rospy.loginfo('Executing identify position')
         self.pos_pub.publish(self.checking_pose)
         rospy.sleep(sleep_s)
@@ -135,6 +167,11 @@ class MoveToIdentifyPosition(smach.State):
 
 
 class IdentifyBlock(smach.State):
+
+    """
+    Identifies whether the robot is holding a block and what colour the block is
+    """
+
     def __init__(self):
         smach.State.__init__(self, outcomes=['identified', 'no_block'], output_keys=['block_colour'])
         self.colour_sub = rospy.Subscriber('/block_colour', String, self.callback)
@@ -143,6 +180,12 @@ class IdentifyBlock(smach.State):
     
 
     def execute(self, userdata):
+
+        """
+        Robot to do nothing if colour is not identified.
+        If colour is identified, data is passed on to the next state.
+        """
+
         self.time = rospy.get_time()
 
         while (self.colour == "'none'") :
@@ -161,6 +204,11 @@ class IdentifyBlock(smach.State):
 
 
 class MoveToDrop(smach.State):
+
+    """
+    Robot moves the block to the zone corresponding to the colour of the block
+    """
+
     def __init__(self):
         smach.State.__init__(self, outcomes=['drop_positioned'], input_keys=['block_colour'])
         self.pose_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
@@ -170,6 +218,12 @@ class MoveToDrop(smach.State):
         self.zone_4_blocks = 0
 
     def execute(self, userdata):
+
+        """
+        The only conditions assessed are whether the block is one of the 4 specified colours.
+        The condition to determine whether a block is present was run within the IdentifyBloch class avove.
+        """
+
         rospy.loginfo('Executing state MoveToDrop')
 
         colour = userdata.block_colour
@@ -191,6 +245,11 @@ class MoveToDrop(smach.State):
 
 
 class ReleaseBlock(smach.State):
+    
+    """
+    Command state to close the gripper
+    """
+
     def __init__(self):
         smach.State.__init__(self, outcomes=['released'])
         self.gripper = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
@@ -199,6 +258,11 @@ class ReleaseBlock(smach.State):
         )
 
     def execute(self, userdata):
+
+        """
+        Gripper opens and releases the block
+        """
+
         rospy.loginfo('Executing state Release')
         self.gripper.publish(self.release)
         return 'released'

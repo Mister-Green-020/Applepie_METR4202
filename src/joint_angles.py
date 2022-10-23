@@ -39,6 +39,9 @@ class Joint_Angles:
             z_coordinate (int): z coordinate of the desired frame relative to the
             base of the arm.
             pitch_angle (int): angle of the claw in radians, at the desired frame.
+
+        Returns: "Error: Desired frame is out of range." if distance to desired frame > workspace limit
+
         """
         # Set colour sensing pitch angle to alpha=0
         if z_coordinate > 100: #z>10cm
@@ -93,7 +96,17 @@ class Joint_Angles:
         
 
     def plot_robot(self, joint_angle_1, joint_angle_2, joint_angle_3, joint_angle_4) -> None:
-        # Plots the robot configuration for debugging
+       
+        """
+        Plots the robot configuration for debugging purposes
+                Parameters:
+                    joint_angle_1, joint_angle_2, joint_angle_3, joint_angle_4
+
+                Returns: 
+                   3D plot of robot configuration as defined by joint angles
+        """
+       
+        # Plots the robot configuration
         fig = plt.figure()
         axes = plt.axes(projection='3d')
         axes.set_ylabel("Y")
