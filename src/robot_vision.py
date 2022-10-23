@@ -87,16 +87,20 @@ class RobotVision:
     def camera_to_base(self, fid_t: FiducialTransform) -> Point:
         """
         Determine the position vector of the block relative to the robot base frame from the camera frame
+                Parameters:
+                    fid_t which is a FiducialTransform
+                Returns:
+                    A point; x, y, z    
         """
         p1 = np.array([fid_t.transform.translation.x*1000, fid_t.transform.translation.y*1000, fid_t.transform.translation.z*1000])
         # R1 = np.array([[fid_t.rotation.x,0,0],[0,fid_t.rotation.y,0],[0,0,fid_t.rotation.z]])
         R1 = np.array([[1,0,0],[0,1,0],[0,0,1]])
 
 
-        t_1 = mr.RpToTrans(R1, p1)
+        t_1 = mr.RpToTrans(R1, p1) # function from modern robotics
         t_2 = self.T_rc @ t_1
 
-        R2, p2 = mr.TransToRp(t_2)
+        R2, p2 = mr.TransToRp(t_2) # function from modern robotics
         position = Point(
             x = p2[0]+block_offset,
             y = p2[1]+block_offset if p2[1]>0 else p2[1],
