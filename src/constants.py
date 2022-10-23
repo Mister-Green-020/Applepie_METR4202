@@ -36,6 +36,9 @@ zone_2 = Point(-150, -50, 0)
 zone_3 = Point(-150, 50, 0)
 zone_4 = Point(-50, 150, 0)
 
+
+
+
 red_zone = Zone("'red'", zone_1)
 blue_zone = Zone("'blue'", zone_2)
 green_zone = Zone("'green'", zone_3)
@@ -64,9 +67,21 @@ id_pose = Pose(
 # Sleep
 sleep_s = 1
 wait_time = 3.0
+
 # Gripper
 open_val = 2000
 close_val = 1400
 
+# Bonus task calibration and constants
 
+throw_wait = 1.5
+throw_release = 0.2
+throw_zone_1 = Point(40, -100, 80)
+throw_zone_2 = Point(100, 0, 80)
+throw_zone_3 = Point(100, 0, 80)
+throw_zone_4 = Point(40, 100, 80)
+red_zone_throw = Zone("'red'", throw_zone_1)
+blue_zone_throw = Zone("'blue'", throw_zone_2)
+green_zone_throw = Zone("'green'", throw_zone_3)
+yellow_zone_throw = Zone("'yellow'", throw_zone_4)
 
