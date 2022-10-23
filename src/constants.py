@@ -14,12 +14,12 @@ pitch_angle = -pi/3
 serial = '31702051'
 camera_x = 190
 camera_y = 0
-camera_z = 400
+camera_z = 330
 cam_h = 640
 cam_w = 512
 
 # Out of range values for collission checking and other vision params
-out_of_reach_x = 200
+out_of_reach_x = 220.0
 block_offset = 16
 
 # Object class
@@ -49,7 +49,7 @@ setup_pose = Pose(
 )
 
 # Positions for the starting stage, need to be close enough for standard grabbing range
-init_point = Point(100, 0, 100)
+init_point = Point(100, 0, 80)
 init_pose = Pose(
     position=init_point
 )
@@ -62,9 +62,10 @@ id_pose = Pose(
 
 # Sleep
 sleep_s = 1
+wait_time = 3.0
 # Gripper
 open_val = 2000
-close_val = 1500
+close_val = 1400
 
 
 

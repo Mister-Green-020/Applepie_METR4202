@@ -38,11 +38,14 @@ class RobotVision:
         # Use FiducialTransforms http://docs.ros.org/en/kinetic/api/fiducial_msgs/html/msg/FiducialTransform.html
         # Many http://docs.ros.org/en/kinetic/api/fiducial_msgs/html/msg/FiducialTransformArray.html
         self.sub = rospy.Subscriber('/fiducial_transforms', FiducialTransformArray, self.image_received)
-        self.previous_fiducials = 0
+        self.dummy_fiducial = FiducialTransform(
+            fiducial_id = -1
+        )
+        self.previous_fiducials = [self.dummy_fiducial]
 
 
 
-    def image_received(self, fiducialTransformArray: FiducialTransformArray) -> None: 
+    def image_received(self, fiducialTransformArray: FiducialTransformArray) : 
         """
         http://docs.ros.org/en/kinetic/api/fiducial_msgs/html/msg/FiducialTransformArray.html
         
@@ -50,23 +53,23 @@ class RobotVision:
         """
         fiducial_transforms = fiducialTransformArray.transforms
         # For collision checking (in bounds to be grabbed)
-        available_transforms = []
+        available_poses = []
 
         for transform in fiducial_transforms :
-            if self.collision_checking(transform) :
-                available_transforms.append(transform)
-
-        # If there are transforms available, select the one
-        if (len(available_transforms) > 0) :
-            selected = available_transforms[0]
-            pose = Pose (
-                position = self.camera_to_base(selected)
+            new_pose = Pose (
+                position = self.camera_to_base(transform)
             )
-
+            if self.collision_checking(new_pose) :
+                available_poses.append(new_pose)
+        
+        # If there are transforms available, select the one
+        if (len(available_poses) > 0 and not self.is_moving(fiducial_transforms)) :
+            pose = available_poses[0]
             self.pub.publish(pose)
 
+        self.previous_fiducials = fiducial_transforms
     
-    def collision_checking(self, fid_t: FiducialTransform) -> bool :
+    def collision_checking(self, fid_t: Pose) -> bool :
         """
         Checks if given block is unable to be grabbed based on predefined rules.
                 Parameters:
@@ -76,7 +79,8 @@ class RobotVision:
                 Returns: 
                     bool: True if no collisions, False is can collide
         """
-        if (fid_t.transform.translation.x > out_of_reach_x) :
+        # rospy.loginfo(fid_t.transform.translation.x*1000)
+        if (fid_t.position.x > out_of_reach_x) :
             return False
         
         return True
@@ -95,14 +99,17 @@ class RobotVision:
         R2, p2 = mr.TransToRp(t_2)
         position = Point(
             x = p2[0]+block_offset,
-            y = p2[1]+block_offset,
-            z = p2[2]
+            y = p2[1]+block_offset if p2[1]>0 else p2[1],
+            # z = p2[2]
+            z = 20
         )
         return position
     
     def is_moving(self, fid_t_arr) -> bool :
         fid_check = None
         prev_fid = None
+        # rospy.loginfo(fid_t_arr[0].transform.translation.x*1000)
+        # rospy.loginfo(self.previous_fiducials[0].transform.translation.x*1000)
         for fid_t in fid_t_arr :
             if (fid_check != None) :
                 break
@@ -115,10 +122,11 @@ class RobotVision:
         if fid_check == None :
             return True
 
-        if ((abs(fid_check.transform.translation.x) - abs(prev_fid.transform.translation.x))>0.5) :
+        if ((abs(fid_check.transform.translation.x*1000) - abs(prev_fid.transform.translation.x*1000))>1) :
             return True
-        if ((abs(fid_check.transform.translation.y) - abs(prev_fid.transform.translation.y))>0.5) :
+        if ((abs(fid_check.transform.translation.y*1000) - abs(prev_fid.transform.translation.y*1000))>1) :
             return True
+
         return False
         
 

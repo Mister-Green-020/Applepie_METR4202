@@ -50,7 +50,7 @@ class InitialState(smach.State):
         rospy.loginfo('Executing state Initial')
         self.gripper_pub.publish(self.open_gripper)
         self.pose_pub.publish(self.initial_config)
-        rospy.sleep(sleep_s)
+        rospy.sleep(1)
 
         return 'initialised'
 
@@ -72,7 +72,7 @@ class FindBlock(smach.State):
     
     def execute(self, userdata):
         rospy.loginfo('Executing state FindBlock')
-        
+        rospy.sleep(1)
         while not self.block_found :
             pass
 
@@ -114,7 +114,7 @@ class GrabBlock(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state GrabBlock')
         self.pub.publish(self.grab)
-        rospy.sleep(sleep_s)
+        # rospy.sleep(sleep_s)
         return 'grabbed'
 
 class MoveToIdentifyPosition(smach.State):
@@ -136,13 +136,18 @@ class MoveToIdentifyPosition(smach.State):
 
 class IdentifyBlock(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['identified'], output_keys=['block_colour'])
+        smach.State.__init__(self, outcomes=['identified', 'no_block'], output_keys=['block_colour'])
         self.colour_sub = rospy.Subscriber('/block_colour', String, self.callback)
         self.colour = "'none'"
+        self.time = 0
+    
 
     def execute(self, userdata):
+        self.time = rospy.get_time()
 
         while (self.colour == "'none'") :
+            if ((rospy.get_time() - self.time) > wait_time) :
+                return 'no_block'
             pass
 
         # Pass colour to next state
@@ -226,7 +231,7 @@ def main():
                         transitions={'in_identify_position':'IdentifyBlock'})
 
         smach.StateMachine.add('IdentifyBlock', IdentifyBlock(), 
-                        transitions={'identified':'MoveToDrop'})
+                        transitions={'identified':'MoveToDrop', 'no_block' : 'InitialState'})
 
         smach.StateMachine.add('MoveToDrop', MoveToDrop(), 
                         transitions={'drop_positioned':'ReleaseBlock'})
