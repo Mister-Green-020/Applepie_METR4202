@@ -183,7 +183,7 @@ class ThrowBlock(smach.State):
         elif colour == yellow_zone.colour :
             self.pose_pub.publish(yellow_zone.pose)
 
-        rospy.sleep(0.2)
+        rospy.sleep(0.25)
         self.gripper.publish(self.release)
         return 'bye_bye_block'
 
