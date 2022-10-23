@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 # Code adapted from https://github.com/UQ-METR4202/metr4202_ximea_ros/blob/main/ximea_color/src/example_camera.py
 
 import string
