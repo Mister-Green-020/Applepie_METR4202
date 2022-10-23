@@ -182,7 +182,7 @@ class GoToThrowPos(smach.State):
         userdata.colour = colour
         return 'in_throw_pos'
 
-class MoveToSafetyDrop(smach.State):
+class SafetyDrop(smach.State):
     """
     State to move the block to a position in which the colour can be easily determined
     """
