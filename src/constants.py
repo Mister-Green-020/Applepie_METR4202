@@ -21,6 +21,7 @@ cam_w = 512
 # Out of range values for collission checking and other vision params
 out_of_reach_x = 220.0
 block_offset = 16
+d_err = 1
 
 # Object class
 class Zone:
@@ -30,10 +31,10 @@ class Zone:
             position = point
         )
 
-zone_1 = Point(-50, 150, 0)
-zone_2 = Point(-150, 50, 0)
+zone_1 = Point(-50, -150, 0)
+zone_2 = Point(-150, -50, 0)
 zone_3 = Point(-150, 50, 0)
-zone_4 = Point(-150, -50, 0)
+zone_4 = Point(-50, 150, 0)
 
 red_zone = Zone("'red'", zone_1)
 blue_zone = Zone("'blue'", zone_2)

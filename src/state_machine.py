@@ -28,7 +28,7 @@ class Setup(smach.State):
 
         self.camera_pub.publish(show_rgb)
         self.position_pub.publish(self.setup_state)
-        rospy.sleep(sleep_s)
+        rospy.sleep(2)
 
         return 'setup'
         
@@ -72,13 +72,14 @@ class FindBlock(smach.State):
     
     def execute(self, userdata):
         rospy.loginfo('Executing state FindBlock')
-        rospy.sleep(1)
+        rospy.sleep(sleep_s)
         while not self.block_found :
             pass
 
         rospy.loginfo('Position found')
 
         userdata.block_transform = self.pose
+        self.pose = init_pose
         self.block_found = False
         return 'position_found'
 
@@ -95,7 +96,7 @@ class MoveToBlock(smach.State):
     def execute(self, userdata):
         rospy.loginfo('Executing state Move')
         self.new_position.publish(userdata.block_transform)
-        rospy.sleep(sleep_s)
+        rospy.sleep(0.7)
         return 'positioned'
         
 
@@ -171,8 +172,8 @@ class MoveToDrop(smach.State):
 
     def execute(self, userdata):
         rospy.loginfo('Executing state MoveToDrop')
-
         colour = userdata.block_colour
+        rospy.loginfo(colour)
         if colour == red_zone.colour :
             self.pose_pub.publish(red_zone.pose)
             self.zone_1_blocks += 1
@@ -186,7 +187,7 @@ class MoveToDrop(smach.State):
             self.pose_pub.publish(yellow_zone.pose)
             self.zone_4_blocks += 1
 
-        rospy.sleep(sleep_s)
+        rospy.sleep(2*sleep_s)
         return 'drop_positioned'
 
 
