@@ -76,10 +76,10 @@ close_val = 1400
 
 throw_wait = 1.5
 throw_release = 0.2
-throw_zone_1 = Point(40, -100, 80)
-throw_zone_2 = Point(100, 0, 80)
-throw_zone_3 = Point(100, 0, 80)
-throw_zone_4 = Point(40, 100, 80)
+throw_zone_1 = Point(40, -100, 150)
+throw_zone_2 = Point(100, 0, 150)
+throw_zone_3 = Point(100, 0, 150)
+throw_zone_4 = Point(40, 100, 150)
 red_zone_throw = Zone("'red'", throw_zone_1)
 blue_zone_throw = Zone("'blue'", throw_zone_2)
 green_zone_throw = Zone("'green'", throw_zone_3)

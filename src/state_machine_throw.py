@@ -162,7 +162,7 @@ class IdentifyBlock(smach.State):
 
 class GoToThrowPos(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['in_throw_pos'], input_keys=['block_colour'], output_keys=['_block_colour'])
+        smach.State.__init__(self, outcomes=['in_throw_pos'], input_keys=['block_colour'], output_keys=['colour'])
         self.pose_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
 
     def execute(self, userdata):
@@ -179,15 +179,14 @@ class GoToThrowPos(smach.State):
             self.pose_pub.publish(yellow_zone_throw.pose)
 
         rospy.sleep(throw_wait)
-        self.gripper.publish(self.release)
-        userdata._block_colour = colour
+        userdata.colour = colour
         return 'in_throw_pos'
 
 
 
 class ThrowBlock(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['bye_bye_block'], input_keys=['_block_colour'])
+        smach.State.__init__(self, outcomes=['bye_bye_block'], input_keys=['colour'])
         self.pose_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
         self.gripper = rospy.Publisher('/desired_gripper_position', Bool, queue_size=10)
         self.release = Bool(
@@ -196,7 +195,7 @@ class ThrowBlock(smach.State):
 
     def execute(self, userdata):
         rospy.loginfo('Executing state MoveToDrop')
-        colour = userdata.block_colour
+        colour = userdata.colour
         rospy.loginfo(colour)
         if colour == red_zone.colour :
             self.pose_pub.publish(red_zone.pose)
