@@ -1,6 +1,4 @@
 #! /usr/bin/env python3
-
-
 from math import sqrt
 import rospy
 from std_msgs.msg import Header, String
