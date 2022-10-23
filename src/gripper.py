@@ -7,6 +7,10 @@ from constants import open_val, close_val
 
 class Gripper() :
     def __init__(self) :
+        """
+        Gripper class represents the end effector actuator, which needs to
+        grab a block by closing or open to allow for grabbing
+        """
         self.sub = rospy.Subscriber('/desired_gripper_position', Bool, self.gripper_callback)
         self.pub = rospy.Publisher('/gripper_position', Bool, queue_size=10)
         self.rpi = pigpio.pi()
@@ -16,7 +20,11 @@ class Gripper() :
 
     def gripper_callback(self, open: Bool):
         """
-        Callback function for the gripper which takes in a Boolean message from a topic
+        Callback function for the gripper which will open or grip
+
+            Parameters: 
+                open: Bool set to true is gripper should open or false if 
+                    it should grip
         """
 
         if open.data:
