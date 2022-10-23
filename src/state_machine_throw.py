@@ -216,7 +216,7 @@ def main():
                         transitions={'in_identify_position':'IdentifyBlock'})
 
         smach.StateMachine.add('IdentifyBlock', IdentifyBlock(), 
-                        transitions={'identified':'MoveToDrop', 'no_block' : 'InitialState'})
+                        transitions={'identified':'ThrowBlock', 'no_block' : 'InitialState'})
 
         smach.StateMachine.add('ThrowBlock', ThrowBlock(), 
                         transitions={'bye_bye_block' : 'InitialState'})
