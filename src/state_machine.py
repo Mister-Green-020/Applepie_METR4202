@@ -202,6 +202,26 @@ class IdentifyBlock(smach.State):
     def callback(self, colour: String) :
         self.colour = colour.data
 
+class MoveToSafetyDrop(smach.State):
+    """
+    State to move the block to a position in which the colour can be easily determined
+    """
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['can_safely_drop'])
+        self.safety_pose = safety_pose
+        self.pos_pub = rospy.Publisher('/new_position', Pose, queue_size=10)
+
+
+    def execute(self, userdata):
+
+        """
+        Robot moves the block to specified checking position, holding for 1 second to allow colour to be checked
+        """
+
+        rospy.loginfo('Executing identify position')
+        self.pos_pub.publish(self.safety_pose)
+        rospy.sleep(sleep_s)
+        return 'can_safely_drop'
 
 
 class MoveToDrop(smach.State):
@@ -296,7 +316,10 @@ def main():
                         transitions={'in_identify_position':'IdentifyBlock'})
 
         smach.StateMachine.add('IdentifyBlock', IdentifyBlock(), 
-                        transitions={'identified':'MoveToDrop', 'no_block' : 'InitialState'})
+                        transitions={'identified':'MoveToDrop', 'no_block' : 'MoveToSafetyDrop'})
+        
+        smach.StateMachine.add('MoveToSafetyDrop', MoveToSafetyDrop(), 
+                        transitions={'can_safely_drop':'ReleaseBlock'})
 
         smach.StateMachine.add('MoveToDrop', MoveToDrop(), 
                         transitions={'drop_positioned':'ReleaseBlock'})

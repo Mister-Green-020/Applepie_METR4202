@@ -20,7 +20,7 @@ cam_w = 512
 
 # Out of range values for collission checking and other vision params
 out_of_reach_x = 220.0
-block_offset = 16
+block_offset = 18
 d_err = 1
 
 # Object class
@@ -59,14 +59,21 @@ init_pose = Pose(
 )
 
 # Positions for the identification stage, needs to be high vertically and centred about camera axis
-id_point = Point(190, 0, 150)
+id_point = Point(185, 0, 150)
 id_pose = Pose(
     position=id_point
 )
 
+# Defines the safe release location
+safety_point = Point(145, 0, 50)
+safety_pose = Pose(
+    position=safety_point
+)
+
 # Sleep
 sleep_s = 1
-wait_time = 3.0
+# Colour Detection Time
+wait_time = 2.0
 
 # Gripper
 open_val = 2000

@@ -107,7 +107,7 @@ class RobotVision:
             x = p2[0]+block_offset,
             y = p2[1]+block_offset if p2[1]>0 else p2[1],
             # z = p2[2]
-            z = 20
+            z = 10
         )
         return position
     
