@@ -208,8 +208,6 @@ class SafetyDrop(smach.State):
         self.grip_pub.publish(self.release)
         return 'can_safely_drop'
 
-
-
 class ThrowBlock(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['bye_bye_block'], input_keys=['colour'])
@@ -268,14 +266,14 @@ def main():
                         transitions={'identified':'GoToThrowPos', 'no_block' : 'SafetyDrop'})
         
         smach.StateMachine.add('SafetyDrop', SafetyDrop(), 
-                        transitions={'can_safely_drop':'ReleaseBlock'})
+                        transitions={'can_safely_drop':'InitialState'})
 
         smach.StateMachine.add('GoToThrowPos', GoToThrowPos(), 
                         transitions={'in_throw_pos' : 'ThrowBlock'})
 
         smach.StateMachine.add('ThrowBlock', ThrowBlock(), 
                         transitions={'bye_bye_block' : 'InitialState'})
-
+        
 
     # Execute SMACH plan
     outcome = sm.execute()
