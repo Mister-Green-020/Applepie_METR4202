@@ -4,6 +4,9 @@ METR4202 Sem 2 2022 Group Project.
 - Understanding ROS Nodes: http://cdn.joshua-wallace.com/metr4202.png
 - State machine logic: http://cdn.joshua-wallace.com/statemachine.png
 
+## Rasberry Pi
+Password: 230927
+
 ## Running With Launch Files
 - Start all nodes except state_machine.py
 ```console
