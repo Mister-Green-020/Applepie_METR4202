@@ -1,0 +1,6 @@
+<launch>
+
+    <!-- State Machine Node -->
+    <node pkg="applepi" type="state_machine.py" name="state_machine" output="screen"/>
+
+</launch>

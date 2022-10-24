@@ -1,0 +1,23 @@
+<launch>
+
+    <!-- Start Dynamixel Controller -->
+    <include file="$(find dynamixel_interface)/launch/dynamixel_interface_controller.launch"/>
+
+    <!-- Start Camera Node & Aurco Detection -->
+    <node pkg="ximea_ros" type="ximea_demo" name="ximea_demo"/>
+    <include file="$(find ximea_ros)/launch/ximea_aruco.launch">
+         <arg name="serial" value="31702051"/>
+    </include> 
+
+    <!-- Block Planning Node -->
+    <node pkg="applepi" type="robot_vision.py" name="robot_vision"/>
+
+    <!-- Color Detector Node -->
+    <node pkg="applepi" type="colour_detector.py" name="colour_detector"/>
+
+    <!-- Start Inverse Kinematics Node (inverse kinematics and collision detection) -->
+    <node pkg="applepi" type="ik_node.py" name="ik_node"/>
+
+    <!-- Start Gripper Node -->
+    <node pkg="applepi" type="gripper.py" name="gripper"/>
+</launch>
