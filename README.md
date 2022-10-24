@@ -44,7 +44,7 @@ python3 colour_detector.py
 
 ## Nodes
 - joint_publisher.py
-    - Given a desired pose (3D point to move to), computes the required angles to achieve the pose
+    - Given a desired pose (spatial), computes the required angles to achieve the pose
     - Subscribes To
         - /new_position (Pose)
     - Publishes To
@@ -57,31 +57,34 @@ python3 colour_detector.py
         - /desired_gripper_position (Bool)
         - /new_position (Pose)
         - /ximea_ros/show_rgb (Bool)
-- block_planning.py
-    - Node to handle behaviour planning including collision checking, colours and position/orientation of blocks
-    - Subscribes to
-        - /ximea_ros/ximea_XXXXXXXX/image_raw (sensors_msgs/Image)
-    - Publishes to
+- state_machine_throw.py
+    - Implements logic to complete move-grab-throw circuit and initialisation of robot
+    - Subscribes To
         - /block_positions (TBD)
+    - Publishes To
+        - /desired_gripper_position (Bool)
+        - /new_position (Pose)
+        - /ximea_ros/show_rgb (Bool)
+- robot_vision.py
+    - Vision node to interpret positions of the AruCo tags, validate them as possible and convert to a pose for the robot frame
+    - Subscribes to
+        - /fiducial_transforms (fiducial_msgs/FiducialTransformArray)
+    - Publishes to
+        - /block_positions (Pose)
+- colour_detection.py
+    - Colour detection of the block is done by moving it to a fixed position and taking converting a subset of the large image to determine dominant colour
+    - Subscribes to
+        - /ximea_ros/ximea_31702051/image_raw (sensor_msgs/Image)
+    - Publishes to
+        - /block_colour (String)
+        - /rgba_colour (ColorRGBA)
 - gripper.py
-    - Node to actuate the gripper when directed by state machine
+    - Node to actuate the control the gripper
     - Subscribes To
         - /desired_gripper_position (Bool)
     - Publishes To
-        - /gripper_position (Bool) [Redundant topic]
+        - /gripper_position (Bool)
 
-
-## To do:
-
-- State machine
-    - basic behaviour planning
-        - flip gripper 90 degrees to detect block colour
-- Camera
-    - Take picture (metr4202_ximea_ros/.../example_camera.py)
-    - interpert camera data
-        - get coordinates of blocks
-            - frame transform using modern robotics library
-        - determine block colour (metr4202_ximea_ros/.../ximea_color_detect.cpp)
 
 ## Robot Set Up:
 ```console
