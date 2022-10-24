@@ -4,7 +4,22 @@ METR4202 Sem 2 2022 Group Project.
 - Understanding ROS Nodes: http://cdn.joshua-wallace.com/metr4202.png
 - State machine logic: http://cdn.joshua-wallace.com/statemachine.png
 
-## Running
+## Running With Launch Files
+- Start all nodes except state_machine.py
+```console
+roslaunch applepi master.launch
+```
+Activate state machines for relevant tasks
+- Place blocks in area behind robot arm
+```console
+roslaunch applepi state.launch
+```
+- Throw blocks in defined direction
+```console
+roslaunch applepi throw.launch
+```
+
+## Running Without Launch Files
 - Setup Commands
 ```console
 sudo pigpiod
